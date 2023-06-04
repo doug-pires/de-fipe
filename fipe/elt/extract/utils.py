@@ -9,6 +9,8 @@ logger = get_logger(__name__)
 
 
 def get_complete_tbody(driver) -> List:
+
+    logger.info("Extract information from table")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -55,6 +57,8 @@ def scrape_options_month_year(driver) -> List:
     This function extracts
     All Month-Year available to iterate over it.
     """
+
+    logger.info("Extracting information from all Reference Months available")
     # I can pick the values AVAILABLE, or using Requests or BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -77,7 +81,7 @@ def scrape_options_brands(driver) -> List:
     This function extracts
     All Brands available to iterate over it.
     """
-
+    logger.info("Extracting information from all Brands available")
     # I can pick the values AVAILABLE, or using Requests or BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -96,6 +100,7 @@ def scrape_options_brands(driver) -> List:
 
 
 def scrape_options_models(driver) -> List:
+    logger.info("Extracting information from models available depending on Brands")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
     options_models_years = soup.find("div", attrs={"class": "step-2"})
@@ -111,6 +116,7 @@ def scrape_options_models(driver) -> List:
 
 # brand: str, model: str,
 def get_year_fuel(driver) -> List:
+    logger.info("Extracting information from FABRICATION YEAR and kind of FUEL available depending on Brand and Model")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
