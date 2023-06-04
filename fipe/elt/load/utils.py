@@ -17,13 +17,9 @@ def transform_to_df(
     return df
 
 
-def save_as_delta(
-    df: DataFrame,
-    path: str,
-    mode="overwrite",
-    schema=None,
-):
-    return df.write.format("delta").mode(mode).save(path).schema(schema)
+def save_as_delta(df: DataFrame, path: str, delta_table_name: str, mode="overwrite"):
+    path_table = f"{path}/{delta_table_name}"
+    return df.write.format("delta").mode(mode).save(path_table)
 
 
 def run_vacumm():
@@ -32,7 +28,7 @@ def run_vacumm():
 
 if __name__ == "__main__":
     additional_options = {
-        "spark.master": "local[1]",
+        "spark.master": "local[*]",
         # Add other additional options here
     }
     spark_manager = SparkSessionManager(
@@ -45,5 +41,6 @@ if __name__ == "__main__":
     path_development = Path().cwd().as_posix()
     schema = StructType([StructField("reference_month", StringType(), False)])
     df = transform_to_df(spark, data=["maio/2023", "abril/2023"], schema=schema)
-    save_as_delta(df=df, path=path_development)
+    save_as_delta(df=df, path=path_development, delta_table_name="months")
     df.show()
+    print(path_development)
