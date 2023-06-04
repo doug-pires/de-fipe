@@ -5,12 +5,11 @@ from typing import Dict, Any
 from fipe.scripts.loggers import get_logger
 from pyspark.sql.types import *
 
+
+# Get Logger
 logger = get_logger(__name__)
 
-# spark_manager = SparkSessionManager(__name__)
-# spark = spark_manager.get_spark_session()
-
-
+# Path to read my configurations
 path_config = Path().cwd() / "fipe/conf/config_pipeline.yml"
 
 
@@ -55,6 +54,7 @@ def get_schema_from(config: Dict, dataframe_name: str):
         for name, data_type, nullable in zip(df_names, df_types, df_nullable)
     ]
     schema = StructType(fields)
+    logger.info("Dataframe name does not exist in the YML file")
     return schema
 
 
@@ -71,7 +71,16 @@ def get_schema_from(config: Dict, dataframe_name: str):
 # df = spark.createDataFrame(data, df_schema)
 
 
+def get_base_path(key: str):
+    try:
+        paths = config[key]
+        logger.info(f"Key {key} loaded successfully")
+    except KeyError:
+        logger.error(f"Key {key} does not exist in the YML file")
+        return exit()
+    return paths
+
+
 if __name__ == "__main__":
-    print(config)
-    df_schema = get_schema_from(config, dataframe_name="brands")
-    print(df_schema)
+    path = get_base_path("base_paths")
+    print(path["bronze"])

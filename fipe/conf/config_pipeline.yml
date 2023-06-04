@@ -1,9 +1,9 @@
 ---
 
 base_paths:
-  bronze_path: "/mnt/bronze"
-  silver_path: "/mnt/silver"
-  gold_path: "/mnt/gold"
+  bronze: "/mnt/bronze"
+  silver: "/mnt/silver"
+  gold: "/mnt/gold"
 
 # Dataframes
 
