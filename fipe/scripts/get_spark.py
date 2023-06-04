@@ -1,28 +1,6 @@
 from pyspark.sql import SparkSession
 from dataclasses import dataclass
-import logging
-
-
-@dataclass
-class SparkManager:
-    spark: SparkSession = None
-    app_name: str = None
-
-    @property
-    def get_spark_session(self) -> SparkSession:
-        """
-        Returns:
-            SparkSession: checks if the Spark session has been created. If not,
-            it creates a new session using the SparkSession builder and stores it in the spark attribute.
-            If the session has already been created, it simply returns the existing session.
-        """
-        if self.spark is None:
-            self.spark = SparkSession.builder.appName(self.app_name).getOrCreate()
-        return self.spark
-
-    def disable_logs(self):
-        logger = logging.getLogger("py4j")
-        logger.setLevel(logging.ERROR)
+from delta import configure_spark_with_delta_pip
 
 
 @dataclass
@@ -30,6 +8,11 @@ class SparkSessionManager:
     app_name: str
     additional_options: dict = None
     __spark_session = None
+
+    DEFAULT_DELTA_OPTIONS = {
+        "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
+        "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog",
+    }
 
     def get_spark_session(self):
         """Returns a Spark Session
@@ -48,11 +31,34 @@ class SparkSessionManager:
             for key, value in self.additional_options.items():
                 spark_builder.config(key, value)
 
-        self.__spark_session = spark_builder.getOrCreate()
+        # Add Delta Lake package to the Spark session
+        builder_with_delta = configure_spark_with_delta_pip(spark_builder)
 
-    def print_options(self):
+        # Add default Delta Lake configurations
+        for key, value in self.DEFAULT_DELTA_OPTIONS.items():
+            builder_with_delta.config(key, value)
+
+        self.__spark_session = builder_with_delta.getOrCreate()
+
+    def print_config(self):
         print(f"Application Name: {self.app_name}")
+        print("Default Delta Lake Options:")
+        for key, value in self.DEFAULT_DELTA_OPTIONS.items():
+            print(f"  {key}: {value}")
+
         if self.additional_options:
             print("Additional Options:")
             for key, value in self.additional_options.items():
                 print(f"  {key}: {value}")
+
+
+if __name__ == "__main__":
+    additional_options = {
+        "spark.master": "local[1]",
+        # Add other additional options here
+    }
+    spark_manager = SparkSessionManager(
+        app_name=__name__, additional_options=additional_options
+    )
+    spark = spark_manager.get_spark_session()
+    spark_manager.print_config()

@@ -21,6 +21,7 @@ black = "^23.3.0"
 flake8 = "^6.0.0"
 pytest = "^7.3.1"
 pyspark = "^3.4.0"
+delta-spark = "^2.4.0"
 
 [build-system]
 requires = ["poetry-core"]
