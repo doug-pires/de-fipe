@@ -131,6 +131,7 @@ venv.bak/
 # My folder to get some variables to devlop locally
 dev/
 dev/**
+*tempCodeRunnerFile
 
 
 # Spyder project settings
