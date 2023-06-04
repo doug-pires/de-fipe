@@ -5,7 +5,6 @@ from fipe.scripts.get_spark import SparkSessionManager
 from pyspark.sql import DataFrame
 from pyspark.sql.types import StructType, StructField, StringType
 from typing import List
-from pathlib import Path
 
 
 def transform_to_df(
@@ -27,6 +26,8 @@ def run_vacumm():
 
 
 if __name__ == "__main__":
+    from dev.dev_utils import path_dev
+
     additional_options = {
         "spark.master": "local[*]",
         # Add other additional options here
@@ -37,10 +38,8 @@ if __name__ == "__main__":
     spark = spark_manager.get_spark_session()
     spark_manager.print_config()
 
-    # Path Development
-    path_development = Path().cwd().as_posix()
     schema = StructType([StructField("reference_month", StringType(), False)])
     df = transform_to_df(spark, data=["maio/2023", "abril/2023"], schema=schema)
-    save_as_delta(df=df, path=path_development, delta_table_name="months")
+    save_as_delta(df=df, path=path_dev, delta_table_name="months")
     df.show()
-    print(path_development)
+    print(path_dev)
