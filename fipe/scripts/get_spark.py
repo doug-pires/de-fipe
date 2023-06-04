@@ -53,10 +53,7 @@ class SparkSessionManager:
 
 
 if __name__ == "__main__":
-    additional_options = {
-        "spark.master": "local[1]",
-        # Add other additional options here
-    }
+    additional_options = {"spark.master": "local[*]"}
     spark_manager = SparkSessionManager(
         app_name=__name__, additional_options=additional_options
     )
