@@ -3,14 +3,7 @@ from pathlib import Path
 import pathlib
 from typing import Dict, Any
 from loggers import get_logger
-from get_spark import SparkSessionManager
-from pyspark.sql.types import (
-    StructType,
-    StructField,
-    StringType,
-    IntegerType,
-    ArrayType,
-)
+from pyspark.sql.types import *
 
 logger = get_logger(__name__)
 
@@ -34,8 +27,8 @@ config = read_config(path_config)
 
 
 def get_schema_from(config: Dict, dataframe_name: str):
-    """In this function,
-    we get the config file from the YML file.
+    """
+    In this function,we get the config file from the YML file.
     The schema information is provided as strings, such as StringType() and "ArrayType(StringType())".
     We use eval() to evaluate these strings as Python expressions and obtain the corresponding PySpark data types.
 
@@ -79,20 +72,6 @@ def get_schema_from(config: Dict, dataframe_name: str):
 
 
 if __name__ == "__main__":
-    # print("Schema DataFrame2", df_schema)
-    # print(df_info)
-    # print("----------------")
-    # print(df_columns)
-    # print("----------------")
-    # print(df_names)
-    # print("----------------")
-    # print(df_types)
-    # print("----------------")
-    # print(df_nullable)
-    # print("----------------")
-    # print(fields)
-    # print("----------------")
-    # print(schema)
 
-    df_schema = get_schema_from(config, dataframe_name="DataFrame6")
+    df_schema = get_schema_from(config, dataframe_name="DataFrame4")
     print(df_schema)
