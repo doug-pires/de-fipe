@@ -5,49 +5,21 @@ base_paths:
   silver_path: "/mnt/silver"
   gold_path: "/mnt/gold"
 
+# Dataframes
 
-DataFrame1:
+reference_month:
   columns:
-  - id
-  - city
-  - name
-  - job
-  types:
-  - IntegerType()
-  - StringType()
-  - StringType()
-  - ArrayType(StringType())
-DataFrame2:
-  columns:
-  - code
-  - color
-  types:
-  - IntegerType
-  - StringType
-DataFrame3:
-  columns:
-  - item_id
-  - item_name
-  types:
-  - IntegerType
-  - StringType
-
-DataFrame4:
-  columns:
-    - name: id
-      type: IntegerType()
+    - name: reference_month
+      type: StringType()
       nullable: false
-    - name: city
-      type: StringType()
-      nullable: true
-    - name: name
-      type: StringType()
-      nullable: true
-    - name: job
-      type: ArrayType(StringType())
-      nullable: true
 
+brands:
+  columns:
+    - name: brand
+      type: StringType()
+      nullable: false
 
+url: https://veiculos.fipe.org.br/
 
 xpaths:
   xpath_search_car : //a[@data-slug='carro' and @data-action='veiculos']

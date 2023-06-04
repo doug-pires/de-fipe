@@ -2,7 +2,7 @@ import yaml
 from pathlib import Path
 import pathlib
 from typing import Dict, Any
-from loggers import get_logger
+from fipe.scripts.loggers import get_logger
 from pyspark.sql.types import *
 
 logger = get_logger(__name__)
@@ -14,16 +14,16 @@ logger = get_logger(__name__)
 path_config = Path().cwd() / "fipe/conf/config_pipeline.yml"
 
 
-def read_config(conf_file) -> Dict[str, Any]:
+def read_config() -> Dict[str, Any]:
     try:
-        config = yaml.safe_load(pathlib.Path(conf_file).read_text())
+        config = yaml.safe_load(pathlib.Path(path_config).read_text())
         logger.info("Read the config file")
         return config
     except FileNotFoundError:
         return logger.error("Configuration file not provided")
 
 
-config = read_config(path_config)
+config = read_config()
 
 
 def get_schema_from(config: Dict, dataframe_name: str):
@@ -72,6 +72,6 @@ def get_schema_from(config: Dict, dataframe_name: str):
 
 
 if __name__ == "__main__":
-
-    df_schema = get_schema_from(config, dataframe_name="DataFrame4")
+    print(config)
+    df_schema = get_schema_from(config, dataframe_name="brands")
     print(df_schema)
