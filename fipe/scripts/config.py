@@ -7,7 +7,7 @@ from pyspark.sql.types import *
 
 
 # Get Logger
-# logger = get_logger(__name__)
+logger = get_logger(__name__)
 
 # Path to read my configurations
 path_config = Path().cwd() / "fipe/conf/config_pipeline.yml"
@@ -56,19 +56,6 @@ def get_schema_from(config: Dict, dataframe_name: str):
     schema = StructType(fields)
     logger.info("Dataframe name does not exist in the YML file")
     return schema
-
-
-# # Testing to create a Dataframe
-# # Sample data
-# data = [
-#     (1, "New York", "John", ["Engineer", "Developer"]),
-#     (2, "San Francisco", "Jane", ["Data Scientist"]),
-#     (3, "London", "Michael", ["Teacher", "Writer"]),
-# ]
-
-
-# # Create the DataFrame
-# df = spark.createDataFrame(data, df_schema)
 
 
 def get_base_path(key: str):
