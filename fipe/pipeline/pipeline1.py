@@ -13,7 +13,7 @@ from fipe.scripts.utils import (
 )
 from fipe.scripts.config import read_config, get_schema_from
 from fipe.elt.extract.utils import scrape_options_month_year, scrape_options_brands
-from fipe.elt.load.utils import transform_to_df
+from fipe.elt.load.utils import transform_list_to_df
 from fipe.scripts.get_spark import SparkSessionManager
 
 spark_manager = SparkSessionManager(app_name=__name__)
@@ -34,8 +34,10 @@ def main():
     click(bt)
     months = scrape_options_month_year(site_fipe)
     brands = scrape_options_brands(site_fipe)
-    df_months = transform_to_df(spark=spark, data=months, schema=schema_reference_month)
-    df_brands = transform_to_df(spark=spark, data=brands, schema=schema_brands)
+    df_months = transform_list_to_df(
+        spark=spark, data=months, schema=schema_reference_month
+    )
+    df_brands = transform_list_to_df(spark=spark, data=brands, schema=schema_brands)
     close_browser(site_fipe)
     df_months.show()
     df_brands.show()

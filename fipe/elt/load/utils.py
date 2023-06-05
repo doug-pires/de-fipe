@@ -6,12 +6,12 @@ from pyspark.sql import DataFrame
 from pyspark.sql.types import StructType, StructField, StringType
 from typing import List
 from fipe.scripts.loggers import get_logger
-from fipe.scripts
+from fipe.scripts.quality_delta import run_vacumm
 
 logger = get_logger(__name__)
 
 
-def transform_to_df(
+def transform_list_to_df(
     spark: SparkSession, data: List[str], schema: StructType = None
 ) -> DataFrame:
     # Create a list of rows with the specified schema
@@ -39,11 +39,5 @@ if __name__ == "__main__":
     spark_manager.print_config()
 
     schema = StructType([StructField("reference_month", StringType(), False)])
-    df = transform_to_df(spark, data=["maio/2023", "abril/2023"], schema=schema)
-    # save_as_delta(df=df, path=path_dev, delta_table_name="months")
-    run_vacumm(
-        spark,
-        path=path_dev,
-        delta_table_name="months",
-        retentio
-    )
+    df = transform_list_to_df(spark, data=["maio/2023", "abril/2023"], schema=schema)
+    save_as_delta(df=df, path=path_dev, delta_table_name="months")
