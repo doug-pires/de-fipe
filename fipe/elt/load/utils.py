@@ -32,7 +32,7 @@ def run_vacumm(path: str, delta_table_name: str):
     #     deltaTable = DeltaTable.forPath(spark, path_table)
     #     return deltaTable.vacuum(0)
     # except Exception:
-    #     pass
+    # # #     pass
     deltaTable = DeltaTable.forPath(spark, path_table)
     return deltaTable.vacuum(0)
 

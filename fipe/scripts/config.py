@@ -7,7 +7,7 @@ from pyspark.sql.types import *
 
 
 # Get Logger
-logger = get_logger(__name__)
+# logger = get_logger(__name__)
 
 # Path to read my configurations
 path_config = Path().cwd() / "fipe/conf/config_pipeline.yml"
