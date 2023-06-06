@@ -114,7 +114,7 @@ def scrape_options_models(driver) -> List:
 
 
 # brand: str, model: str,
-def get_year_fuel(driver) -> List:
+def scrape_manufacturing_year_fuel(driver) -> List:
     logger.info(
         "Extracting information from MANUFACTURING YEAR and kind of FUEL available depending on Brand and Model"
     )

@@ -10,7 +10,7 @@ from pyspark.sql.types import *
 logger = get_logger(__name__)
 
 
-def read_config(path_config) -> Dict[str, Any]:
+def __read_config(path_config) -> Dict[str, Any]:
     try:
         config = yaml.safe_load(pathlib.Path(path_config).read_text())
         logger.info("Read the config file")
@@ -22,11 +22,11 @@ def read_config(path_config) -> Dict[str, Any]:
 # Path to read my configurations
 path_scraper_config = Path().cwd() / "fipe/conf/scraper_config.yml"
 path_bronze_config = Path().cwd() / "fipe/conf/bronze.yml"
-paths_configs = [path_scraper_config, path_bronze_config]
+paths_configs_files = [path_scraper_config, path_bronze_config]
 
 
-def get_configs(paths_configurations: List) -> Dict:
-    """ Read all configuration files and return it as a dictionary
+def get_configs() -> Dict:
+    """Read all configuration files and return it as a dictionary
 
     Args:
         paths_configurations (List): Paths from the configuration files
@@ -34,7 +34,7 @@ def get_configs(paths_configurations: List) -> Dict:
     Returns:
         Dict: _description_
     """
-    configs_list = [read_config(path) for path in paths_configurations]
+    configs_list = [__read_config(path) for path in paths_configs_files]
     configs_dict = {
         config.get("tag"): {k: v for k, v in config.items() if k != "tag"}
         for config in configs_list

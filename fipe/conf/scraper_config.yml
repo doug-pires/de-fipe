@@ -10,5 +10,5 @@ xpaths:
   xpath_bt_month_year : //*[@id="selectTabelaReferenciacarro"]
   xpath_bt_brand : //*[@id="selectMarcacarro"]
   xpath_bt_model : //*[@id="selectAnoModelocarro"]
-  xpath_bt_year_fuel : //*[@id="selectAnocarro"]
+  xpath_bt_manufacturing_year_fuel : //*[@id="selectAnocarro"]
   xpath_bt_search : //a[@id="buttonPesquisarcarro"]

@@ -18,3 +18,14 @@ dataframes:
         type: StringType()
         nullable: false
 
+  models:
+    columns:
+      - name: model
+        type: StringType()
+        nullable: false
+
+  manufacturing_year_fuel:
+    columns:
+      - name: manufacturing_year_fuel
+        type: StringType()
+        nullable: false
