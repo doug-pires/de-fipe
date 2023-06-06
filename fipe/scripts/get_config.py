@@ -1,17 +1,13 @@
 import yaml
 from pathlib import Path
 import pathlib
-from typing import Dict, Any
+from typing import Dict, Any, List
 from fipe.scripts.loggers import get_logger
 from pyspark.sql.types import *
 
 
 # Get Logger
 logger = get_logger(__name__)
-
-# Path to read my configurations
-path_scraper_config = Path().cwd() / "fipe/conf/scraper_config.yml"
-path_bronze_config = Path().cwd() / "fipe/conf/bronze.yml"
 
 
 def read_config(path_config) -> Dict[str, Any]:
@@ -21,6 +17,29 @@ def read_config(path_config) -> Dict[str, Any]:
         return config
     except FileNotFoundError:
         return logger.error("Configuration file not provided")
+
+
+# Path to read my configurations
+path_scraper_config = Path().cwd() / "fipe/conf/scraper_config.yml"
+path_bronze_config = Path().cwd() / "fipe/conf/bronze.yml"
+paths_configs = [path_scraper_config, path_bronze_config]
+
+
+def get_configs(paths_configurations: List) -> Dict:
+    """ Read all configuration files and return it as a dictionary
+
+    Args:
+        paths_configurations (List): Paths from the configuration files
+
+    Returns:
+        Dict: _description_
+    """
+    configs_list = [read_config(path) for path in paths_configurations]
+    configs_dict = {
+        config.get("tag"): {k: v for k, v in config.items() if k != "tag"}
+        for config in configs_list
+    }
+    return configs_dict
 
 
 def get_schema_from(config: Dict, dataframe_name: str) -> StructType:
@@ -67,10 +86,11 @@ def get_base_path(config: Dict) -> str:
 
 
 if __name__ == "__main__":
-    config_scraper = read_config(path_config=path_scraper_config)
-    config_bronze = read_config(path_config=path_bronze_config)
-
-    base_bronze_path = get_base_path(config_bronze)
-    schema = get_schema_from(config_bronze, "brands")
-    print(base_bronze_path)
+    configs = get_configs(paths_configs)
+    config_bronze = configs["bronze"]
+    schema = get_schema_from(config_bronze, "reference_month")
+    schema_brands = get_schema_from(config_bronze, "brands")
+    print(schema_brands)
     print(schema)
+    #  base_bronze_path = get_base_path(config_bronze)
+    # schema = get_schema_from(config_bronze, "brands")
