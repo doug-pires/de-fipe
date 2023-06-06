@@ -1,0 +1,19 @@
+---
+# Pertinent information about Bronze layer
+
+base_path: "/mnt/bronze"
+
+
+dataframes:
+  reference_month:
+    columns:
+      - name: reference_month
+        type: StringType()
+        nullable: false
+
+  brands:
+    columns:
+      - name: brand
+        type: StringType()
+        nullable: false
+

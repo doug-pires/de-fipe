@@ -10,10 +10,11 @@ from pyspark.sql.types import *
 logger = get_logger(__name__)
 
 # Path to read my configurations
-path_config = Path().cwd() / "fipe/conf/config_pipeline.yml"
+path_scraper_config = Path().cwd() / "fipe/conf/scraper_config.yml"
+path_bronze_config = Path().cwd() / "fipe/conf/bronze.yml"
 
 
-def read_config() -> Dict[str, Any]:
+def read_config(path_config) -> Dict[str, Any]:
     try:
         config = yaml.safe_load(pathlib.Path(path_config).read_text())
         logger.info("Read the config file")
@@ -22,10 +23,7 @@ def read_config() -> Dict[str, Any]:
         return logger.error("Configuration file not provided")
 
 
-config = read_config()
-
-
-def get_schema_from(config: Dict, dataframe_name: str):
+def get_schema_from(config: Dict, dataframe_name: str) -> StructType:
     """
     In this function,we get the config file from the YML file.
     The schema information is provided as strings, such as StringType() and "ArrayType(StringType())".
@@ -39,8 +37,9 @@ def get_schema_from(config: Dict, dataframe_name: str):
         StructType: StrucType from Spark.
     """
     try:
-        df_info = config[dataframe_name]
-    except KeyError:
+        get_dataframe_key = config["dataframes"]
+        df_info = get_dataframe_key[dataframe_name]
+    except Exception:
         logger.error("Dataframe name does not exist in the YML file")
         return exit()
     df_columns = df_info["columns"]
@@ -48,26 +47,30 @@ def get_schema_from(config: Dict, dataframe_name: str):
     df_types = [eval(column_info["type"]) for column_info in df_columns]
     df_nullable = [column_info.get("nullable", True) for column_info in df_columns]
 
-    # Define the schema for DataFrame4
     fields = [
         StructField(name, data_type, nullable=nullable)
         for name, data_type, nullable in zip(df_names, df_types, df_nullable)
     ]
     schema = StructType(fields)
-    logger.info("Dataframe name does not exist in the YML file")
+    logger.info(f"Loaded schema for {dataframe_name} dataframe")
     return schema
 
 
-def get_base_path(key: str):
+def get_base_path(config: Dict) -> str:
     try:
-        paths = config[key]
-        logger.info(f"Key {key} loaded successfully")
+        base_path = config["base_path"]
+        logger.info(f"Base Path loaded successfully")
     except KeyError:
-        logger.error(f"Key {key} does not exist in the YML file")
+        logger.error(f"Base Path key does not exist in the YML file")
         return exit()
-    return paths
+    return base_path
 
 
 if __name__ == "__main__":
-    path = get_base_path("base_paths")
-    print(path["bronze"])
+    config_scraper = read_config(path_config=path_scraper_config)
+    config_bronze = read_config(path_config=path_bronze_config)
+
+    base_bronze_path = get_base_path(config_bronze)
+    schema = get_schema_from(config_bronze, "brands")
+    print(base_bronze_path)
+    print(schema)

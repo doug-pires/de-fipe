@@ -6,7 +6,6 @@ from pyspark.sql import DataFrame
 from pyspark.sql.types import StructType, StructField, StringType
 from typing import List
 from fipe.scripts.loggers import get_logger
-from fipe.scripts.quality_delta import run_vacumm
 
 logger = get_logger(__name__)
 
@@ -20,9 +19,18 @@ def transform_list_to_df(
     return df
 
 
-def save_as_delta(df: DataFrame, path: str, delta_table_name: str, mode="overwrite"):
+def save_delta_table(df: DataFrame, path: str, delta_table_name: str, mode="overwrite"):
     path_table = f"{path}/{delta_table_name}"
+    logger.info("Saved as Delta table")
     return df.write.format("delta").mode(mode).save(path_table)
+
+
+def read_delta_table(
+    spark: SparkSession, path: str, delta_table_name: str
+) -> DataFrame:
+    path_table = f"{path}/{delta_table_name}"
+    df = spark.read.format("delta").load(path_table)
+    return df
 
 
 if __name__ == "__main__":
@@ -40,4 +48,4 @@ if __name__ == "__main__":
 
     schema = StructType([StructField("reference_month", StringType(), False)])
     df = transform_list_to_df(spark, data=["maio/2023", "abril/2023"], schema=schema)
-    save_as_delta(df=df, path=path_dev, delta_table_name="months")
+    save_delta_table(df=df, path=path_dev, delta_table_name="months")

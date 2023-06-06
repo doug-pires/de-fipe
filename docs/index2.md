@@ -4,10 +4,11 @@
 - [Use Case](#use-case)
   - [Success](#success)
   - [Failure](#failure)
+  - [Challenges](#challenges)
 
 
 # System
-Build an ELT code to extract data from FIPE. We are going to build the Scraper
+Build an ELT code to extract data from website FIPE. We are going to build the Scraper
 # Actors
 - Databricks workspace
 - DBFS
@@ -45,3 +46,5 @@ Build an ELT code to extract data from FIPE. We are going to build the Scraper
 - Our project will run without errors due to `xpaths` strings.
 ## Failure
 - Pay attention if raises exception, because `xpaths` changes a lot.
+## Challenges
+For being a Scraper we need to Get content, save as Delta, read later again to reuse in other steps.
