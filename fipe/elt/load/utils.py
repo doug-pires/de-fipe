@@ -12,8 +12,6 @@ import pyspark.sql.functions as F
 logger = get_logger(__name__)
 
 
-
-
 def save_delta_table(df: DataFrame, path: str, delta_table_name: str, mode="overwrite"):
     path_table = f"{path}/{delta_table_name}"
     df.write.format("delta").mode(mode).save(path_table)

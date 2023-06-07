@@ -18,6 +18,8 @@ xpath_bt_search = webscraper_config["xpaths"]["xpath_bt_search"]
 
 # Get Bronze Config
 bronze_config = configs["bronze"]
+schema_brands = get_schema_from(bronze_config, "reference_month")
+schema_reference_month = get_schema_from(bronze_config, "brands")
 schema_models = get_schema_from(bronze_config, "models")
 schema_manufacturing_year_fuels = get_schema_from(
     bronze_config, "manufacturing_year_fuel"
