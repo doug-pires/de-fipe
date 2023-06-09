@@ -29,6 +29,16 @@ def run_vacumm(
 
 
 def z_order(spark: SparkSession, path: str, delta_table_name: str):
+    """
+    Apply OPTIMIZE and
+    Apply Z-ORDER in specific COLUMNS
+    Z Ordering is an intelligent way to sort your data in files to maximize the file-skipping capabilities of different queries.
+    The more files that can be skipped, the faster your queries will run. ( M.Powers )
+    Args:
+        spark (SparkSession): _description_
+        path (str): _description_
+        delta_table_name (str): _description_
+    """
     ...
 
 

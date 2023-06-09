@@ -1,12 +1,18 @@
-| Start Date      | Description |
-| ----------- | ----------- |
-| 2023-06-09  | Title       |
+| Start Date | Description |
+| ---------- | ----------- |
+| 2023-06-09 | Title       |
 
-# Summary
-Build an ELT code to extract data from website FIPE. We are going to build the Scraper
-# Basic Example
+# Overview
+Build a pipeline to extract, load and transform the data. According the data movess for each layer, the quality will increase.
+We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br/).
+**Goal**: Deploy the pipeline into Databricks
+**Milestone** Install a Google Chrome browser into the Job Clusters to do the scraper for us.
+**Main Audience** : Other interested engineers and I.
+# Requirements ( High Level functional requirement )
+1. Run the pipeline once a month.
+2. Use (Delta Lake)[https://delta.io/] as Storage framework.
+3.
 - Databricks workspace
-- DBFS
 - Python scripts will run in Databricks as Workflows to make all the tasks.
 # Motivation
 # Detailed Design
@@ -31,10 +37,10 @@ Build an ELT code to extract data from website FIPE. We are going to build the S
 5. Unit testing for the scripts
 - Use `pytest.mark` to mark our files
  - Set `conftest.py` with `SparkSession`
-6. Create pipeline folder and add our scripts python to make the tasks
-7. Set dbx deployment file.
-8. Deploy it utilizing [dbx](https://dbx.readthedocs.io/en/latest/)
-9. Schedule the jobs to run once a month.
+1. Create pipeline folder and add our scripts python to make the tasks
+2. Set dbx deployment file.
+3. Deploy it utilizing [dbx](https://dbx.readthedocs.io/en/latest/)
+4. Schedule the jobs to run once a month.
 # Data Assets
 # Drawbacks/Constraints
 For being a Scraper we need to Get content, save as Delta, read later again to reuse in other steps.
