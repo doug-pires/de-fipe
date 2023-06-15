@@ -7,9 +7,9 @@ Build a pipeline to extract, load and transform the data. According the data mov
 We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br/) which hold Average Vehicle Price.
 One instance : I've bought a car. The brand is **DPIRRE** , model **Azx - 92** , Manufacturing Year is **2019** and the kind of fuel is **Gasoline**
 
-| Brand   | Model    | Manufacturing Year |  Fuel    | Price ( euros )  |
-|---------| ---------| ------------------ |----------|------------------|
-| DPIREE| | Azx - 92 |       2019         | Gasoline |       27.000     |
+| Brand   | Model   | Manufacturing Year |  Fuel    | Price ( euros )  |
+|---------|---------|------------------|----------|------------------|
+| DPIREE | Azx - 92 |       2019         | Gasoline |       27.000     |
 
 Over time my vehicle suffers depreciation or appreciation ( hard to happen ).
 
