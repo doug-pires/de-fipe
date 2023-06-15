@@ -42,6 +42,7 @@ We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br
 4. Schedule the jobs to run once a month.
 
 # Design Considerations
+> Design Principles help to define the common rules & standards that need to be followed while implementing the system. These principles can help build a common understanding across various teams using the central data platform.
 ## Datasources
 - Website
 - Volume
@@ -53,5 +54,5 @@ We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br
 ## Data Governance
 ## Data Security
 
-# Design Considerations
+# Design Principles
 # Tech Solution
