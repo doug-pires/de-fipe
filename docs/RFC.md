@@ -18,7 +18,7 @@ Over time my vehicle suffers depreciation or appreciation ( hard to happen ).
   - Schedule it
   - Build a report on top of Delta tables
 - **Non-Goals**: Pay attention if raises exception, because `xpaths` changes a lot.
-- **Milestone**: Install a Google Chrome browser into the Job Clusters to do the scraper for us.
+- **Milestone**: Install a Google Chrome browser into the Job Clusters to do the scrape for us.
 - **Main Audience**: Other interested engineers and I.
 # Requirements ( High Level functional requirement )
 1. Run the pipeline once a month.
