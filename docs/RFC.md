@@ -7,8 +7,8 @@ Build a pipeline to extract, load and transform the data. According the data mov
 We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br/).
 - **Goal**: Deploy the pipeline into Databricks
 - **Non-Goals**: Pay attention if raises exception, because `xpaths` changes a lot.
-- **Milestone** Install a Google Chrome browser into the Job Clusters to do the scraper for us.
-- **Main Audience** : Other interested engineers and I.
+- **Milestone**: Install a Google Chrome browser into the Job Clusters to do the scraper for us.
+- **Main Audience**: Other interested engineers and I.
 # Requirements ( High Level functional requirement )
 1. Run the pipeline once a month.
 2. Use [Delta Lake](https://delta.io/) as Storage framework.
@@ -40,13 +40,18 @@ We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br
 2. Set dbx deployment file.
 3. Deploy it utilizing [dbx](https://dbx.readthedocs.io/en/latest/)
 4. Schedule the jobs to run once a month.
-# Data Assets
-# Drawbacks/Constraints
-For being a Scraper we need to Get content, save as Delta, read later again to reuse in other steps.
 
-# Alternatives
-# Adoption Strategy
-# Open Questions
-# References
+# Design Considerations
+## Datasources
+- Website
+- Volume
+## Data Ingestion
+## Data Processing
+## Data Storage
+## Data Consumption
+## Data Operation ( DataOps )
+## Data Governance
+## Data Security
 
-
+# Design Considerations
+# Tech Solution
