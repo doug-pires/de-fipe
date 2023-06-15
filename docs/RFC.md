@@ -5,16 +5,15 @@
 # Overview
 Build a pipeline to extract, load and transform the data. According the data movess for each layer, the quality will increase.
 We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br/).
-**Goal**: Deploy the pipeline into Databricks
-**Milestone** Install a Google Chrome browser into the Job Clusters to do the scraper for us.
-**Main Audience** : Other interested engineers and I.
+- **Goal**: Deploy the pipeline into Databricks
+- **Non-Goals**: Pay attention if raises exception, because `xpaths` changes a lot.
+- **Milestone** Install a Google Chrome browser into the Job Clusters to do the scraper for us.
+- **Main Audience** : Other interested engineers and I.
 # Requirements ( High Level functional requirement )
 1. Run the pipeline once a month.
-2. Use (Delta Lake)[https://delta.io/] as Storage framework.
-3.
+2. Use [Delta Lake](https://delta.io/) as Storage framework.
 - Databricks workspace
 - Python scripts will run in Databricks as Workflows to make all the tasks.
-# Motivation
 # Detailed Design
 1. Set the local environment
  - Poetry to manage our metadata project
@@ -44,10 +43,7 @@ We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br
 # Data Assets
 # Drawbacks/Constraints
 For being a Scraper we need to Get content, save as Delta, read later again to reuse in other steps.
-## Goals
-- Our project will run without errors due to `xpaths` strings.
-## Non-Goals
-- Pay attention if raises exception, because `xpaths` changes a lot.
+
 # Alternatives
 # Adoption Strategy
 # Open Questions
