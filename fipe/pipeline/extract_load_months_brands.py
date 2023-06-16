@@ -35,10 +35,11 @@ def main():
     )
     df_brands = transform_list_to_df(spark=spark, data=brands, schema=cf.schema_brands)
     close_browser(site_fipe)
-    save_delta_table(df_months, path_dev, "reference_month")
-    save_delta_table(df_brands, path_dev, "brands")
-    df_months_as_delta = read_delta_table(spark, path_dev, "reference_month")
-    df_months_as_delta.show()
+    df_brands.show()
+    # save_delta_table(df_months, path_dev, "reference_month")
+    # save_delta_table(df_brands, path_dev, "brands")
+    # df_months_as_delta = read_delta_table(spark, path_dev, "reference_month")
+    # df_months_as_delta.show()
 
 
 if __name__ == "__main__":

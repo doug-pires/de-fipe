@@ -27,3 +27,11 @@ delta-spark = "^2.4.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.pytest.ini_options]
+addopts = ["--strict-markers", "--strict-config", "-ra"]
+testpaths = ["tests"]
+markers = [
+    { name = "extract", description = "tests for extraction code" }
+]

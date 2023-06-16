@@ -10,8 +10,9 @@ We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br
 **Main Audience** : Other interested engineers and I.
 # Requirements ( High Level functional requirement )
 1. Run the pipeline once a month.
-2. Use (Delta Lake)[https://delta.io/] as Storage framework.
-3.
+2. Use [Delta Lake](https://delta.io/) as Storage framework.
+3. Use Functional Programming & OOP for some cases.
+4. [pytest](https://docs.pytest.org/en/7.3.x/) as test framework
 - Databricks workspace
 - Python scripts will run in Databricks as Workflows to make all the tasks.
 # Motivation
