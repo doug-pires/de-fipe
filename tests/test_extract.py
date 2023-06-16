@@ -25,4 +25,4 @@ def test_if_extract_brands():
 
 
 if __name__ == "__main__":
-    pytest.main(["-v"])
+    pytest.main(["-v", "--setup-show"])

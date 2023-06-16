@@ -12,11 +12,14 @@ from fipe.scripts.utils import (
 )
 from fipe.elt.extract.utils import scrape_options_models, scrape_manufacturing_year_fuel
 from fipe.elt.load.utils import (
-    transform_df_to_list,
     save_delta_table_partitioned,
     read_delta_table,
 )
-from fipe.elt.transform.utils import transform_list_to_df, add_column
+from fipe.elt.transform.utils import (
+    transform_list_to_df,
+    add_column,
+    transform_df_to_list,
+)
 from fipe.scripts.get_spark import SparkSessionManager
 import fipe.pipeline.read_configuration as cf
 
@@ -54,7 +57,7 @@ def main():
             add_on(bt_brand, brand)
             list_models = scrape_options_models(site_fipe)
             # df_models = transform_list_to_df(spark, list_models, cf.schema_models)
-            # df_with_brand = add_column(df_models, "brand", brand[0])
+            # df_with_brand = add_column(df_models, "brand", brand)
             # save_delta_table_partitioned(
             #     df=df_with_brand,
             #     path=path_dev,

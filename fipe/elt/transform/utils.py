@@ -6,7 +6,8 @@ from pyspark.sql.types import StructType
 from typing import List
 from fipe.scripts.loggers import get_logger
 import pyspark.sql.functions as F
-
+from fipe.scripts.get_spark import SparkSessionManager
+from pyspark.sql.types import StructType, StructField, StringType
 
 logger = get_logger(__name__)
 
@@ -24,9 +25,9 @@ def transform_df_to_list(df: DataFrame):
     # Collect DataFrame rows as a list
     rows_list = df.collect()
     # Convert Row objects to a nested list
-    list_data = [list(row) for row in rows_list]
+    brand_list = [row[0] for row in rows_list]
     logger.info("Transforming Dataframe to list")
-    return rows_list
+    return brand_list
 
 
 def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
@@ -35,4 +36,13 @@ def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
 
 
 if __name__ == "__main__":
-    transform_df_to_list()
+    schema = StructType(
+        [
+            StructField("brand", StringType(), nullable=False),
+        ]
+    )
+    data = [("Toyota",), ("Ford",), ("Chevrolet",)]
+    spark = SparkSessionManager(__name__).get_spark_session()
+    df_brands = spark.createDataFrame(data=data, schema=schema)
+
+    print(transform_df_to_list(df=df_brands))

@@ -16,7 +16,7 @@ def test_if_transform_df_to_list(spark_session):
     brand_list = transform_df_to_list(df_brands)
 
     # Then returns the result into a list and MUST MATCH the expected list
-    expected_brands = ["Nissan", "Ford", "Chevrolet"]
+    expected_brands = ["Toyota", "Ford", "Chevrolet"]
 
     assert brand_list == expected_brands
 
