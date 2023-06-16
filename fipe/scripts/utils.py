@@ -32,7 +32,7 @@ def open_chrome(url):
         time.sleep(3)
         logger.info("Loaded Google Chrome")
         return driver
-    except WebDriverException:
+    except [WebDriverException, AttributeError]:
         logger.error("This site can't be reached")
         return close_browser(driver)
 

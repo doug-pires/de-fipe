@@ -38,15 +38,6 @@ def read_delta_table(
     return df
 
 
-def transform_df_to_list(df: DataFrame):
-    # Collect DataFrame rows as a list
-    rows_list = df.collect()
-    # Convert Row objects to a nested list
-    list_data = [list(row) for row in rows_list]
-    logger.info("Transforming Dataframe to list")
-    return list_data
-
-
 if __name__ == "__main__":
     from dev.dev_utils import path_dev
 

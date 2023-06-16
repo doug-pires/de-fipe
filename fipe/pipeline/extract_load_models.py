@@ -29,10 +29,12 @@ spark = spark_manager.get_spark_session()
 def main():
     from dev.dev_utils import path_dev
 
-    df_month_year_as_delta = read_delta_table(spark, path_dev, "reference_months")
+    df_month_year_as_delta = read_delta_table(spark, path_dev, "reference_month")
     df_brands = read_delta_table(spark, path_dev, "brands")
     list_reference_month_year = transform_df_to_list(df_month_year_as_delta)
     list_brands = transform_df_to_list(df_brands)
+    print(list_brands[:3])
+    print(type(list_brands[:3]))
     site_fipe = open_chrome(cf.url)
     scroll_to_element(site_fipe, cf.xpath_search_car)
     bt = locate_bt(site_fipe, cf.xpath_search_car)
@@ -46,28 +48,30 @@ def main():
         click(bt_month_year)
         time.sleep(0.5)
         add_on(bt_or_box=bt_month_year, info=month_year)
-        for brand in list_brands[:3]:
+        for brand in list_brands[:2]:
             time.sleep(1)
             bt_brand = locate_bt(site_fipe, cf.xpath_bt_brand)
             add_on(bt_brand, brand)
             list_models = scrape_options_models(site_fipe)
-            print(list_models)
-            df_models = transform_list_to_df(spark, list_models, cf.schema_models)
-            df_with_brand = add_column(df_models, "brand", brand[0])
-            save_delta_table_partitioned(
-                df=df_with_brand,
-                path=path_dev,
-                delta_table_name="models",
-                partition_by="brand",
-            )
+            # df_models = transform_list_to_df(spark, list_models, cf.schema_models)
+            # df_with_brand = add_column(df_models, "brand", brand[0])
+            # save_delta_table_partitioned(
+            #     df=df_with_brand,
+            #     path=path_dev,
+            #     delta_table_name="models",
+            #     partition_by="brand",
+            # )
             for model in list_models[:2]:
                 bt_model = locate_bt(driver=site_fipe, xpath=cf.xpath_bt_model)
                 click(bt_model)
                 add_on(bt_model, model)
                 list_manufacturing_year_fuel = scrape_manufacturing_year_fuel(site_fipe)
-                print(
-                    f"Model : {model}, Manufacturing Year and kind of fuel: {list_manufacturing_year_fuel}"
-                )
+                for manufacturing_year in list_manufacturing_year_fuel[:2]:
+                    print(
+                        f"Brand: {brand} :-: Model: {model} :-: Manufacturing Year: {manufacturing_year}"
+                    )
+
+        # save_delta_table_partitioned()
 
     close_browser(site_fipe)
 
