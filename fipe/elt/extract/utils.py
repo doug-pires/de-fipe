@@ -1,14 +1,14 @@
 # This file hold EXTRACT functions
 
 from bs4 import BeautifulSoup
-from typing import List
+from typing import List, Dict
 from fipe.scripts.loggers import get_logger
 
 
 logger = get_logger(__name__)
 
 
-def get_complete_tbody(driver) -> List:
+def scrape_complete_tbody(driver) -> Dict:
     logger.info("Extract information from table")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
@@ -115,9 +115,7 @@ def scrape_options_models(driver) -> List:
 
 # brand: str, model: str,
 def scrape_manufacturing_year_fuel(driver) -> List:
-    logger.info(
-        "Extracting information from MANUFACTURING YEAR and kind of FUEL available depending on Brand and Model"
-    )
+    logger.info("Extracting information from MANUFACTURING YEAR - FUEL")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
 

@@ -101,23 +101,25 @@ The website [FIPE](https://veiculos.fipe.org.br/) has its particularity.
 One instance:
 I can extract ALL *reference months* and *brands* with two automations, which is **OPEN BROWSER ---> CLICK THE BUTTON VEHICLES.**
 However I can have situations where, for a specific *reference month* I dont have a particular *brand*,*model* or *manufacturing year - fuel*
-The flow will be. Extract ALL *reference months* available and save it as Delta.
-Then, we will read the table *reference months* and iterate over them to add into the box, get all *brands*, *models* and *manufacturing year - fuel* available. We will save the Delta Table partitioned by *reference months*.
-
-Extract the *models* I need more automations, which is **ADD A SPECIFIC BRAND ---> EXTRACT ALL MODELS**
-Extract the *manufacturing year - fuel* for a specific *brand* and *model* I need one more automation **ADD A SPECIFIC MODEL ---> EXTRACT ALL MANUFACTURING YEAR - FUEL**
+The flow will be ---> Extract ALL *reference months* available and save it as Delta.
+Then, we will read the table *reference months* and iterate over them to add into the box, get all *brands*, *models* and *manufacturing year - fuel* available for that *reference month* in the context.
+Then there is a function to extract the HTML table over the tag `<tbody> Table </tbody>` and return as Dict and append into a List. When ALL the *brands*, *models* and *manufacturing year - fuel* ends for a SPECIFIC *reference month* we will generate a `List[Dict]` then we will transform it to a dataframe and save in our `mnt/bronze`. The Task will run until all data be scraped.
+The final result on `Bronze Layer` will be Delta Table partitioned by *reference months*.
 
 ## Workflow
 - Task 1:
   1. Open Browser
-  2. Extract all *reference months* and *brands*
+  2. Extract all *reference months*
   3. Save them as Delta Tables
   4. Close Browser
 - Task 2:
    1. Open Browser
-   2. Read *reference months* and *brands*
-   3.
-4.
+   2. Read *reference months* and iterate over them to extract *brands*,*models*,**manufacturing year - fuel*
+   3. After finishing one *reference month* we will save as Delta Table partiotined by reference month
+   4. Repeat the Cycle
+- Task3:
+   1. Read the tables on `Bronze` apply data cleansing, validation
+   2. Save on `Gold Layer`
 
 ## Data Assets
 Once we are thinking about extraction

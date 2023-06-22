@@ -7,7 +7,8 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 import time
 from fipe.scripts.loggers import get_logger
 from selenium.common.exceptions import WebDriverException
-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 logger = get_logger(__name__)
 

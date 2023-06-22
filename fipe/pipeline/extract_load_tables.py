@@ -14,6 +14,7 @@ from fipe.elt.extract.utils import (
     scrape_options_brands,
     scrape_options_models,
     scrape_manufacturing_year_fuel,
+    scrape_complete_tbody,
 )
 from fipe.elt.load.utils import (
     save_delta_table_partitioned,
@@ -26,11 +27,14 @@ from fipe.elt.transform.utils import (
 )
 from fipe.scripts.get_spark import SparkSessionManager
 import fipe.pipeline.read_configuration as cf
-
+from fipe.scripts.loggers import get_logger
 import time
+
 
 spark_manager = SparkSessionManager(app_name=__name__)
 spark = spark_manager.get_spark_session()
+
+logger = get_logger(__name__)
 
 
 def main():
@@ -76,10 +80,23 @@ def main():
                 ################
                 list_manufacturing_year_fuel = scrape_manufacturing_year_fuel(site_fipe)
                 for manufacturing_year in list_manufacturing_year_fuel[:2]:
-                    print(
-                        f"Brand: {brand} :-: Model: {model} :-: Manufacturing Year: {manufacturing_year}"
+                    logger.info(
+                        f"Reference Month: {month_year} :-: Brand: {brand} :-: Model: {model} :-: Manufacturing Year: {manufacturing_year}"
                     )
+                    time.sleep(1)
+                    bt_manufacturing_year = locate_bt(
+                        site_fipe, cf.xpath_bt_manufacturing_year_fuel
+                    )
+                    click(bt_manufacturing_year)
+                    add_on(bt_manufacturing_year, manufacturing_year)
 
+                    # Press Search
+                    bt_search = locate_bt(site_fipe, cf.xpath_bt_search)
+                    click(bt_search)
+
+                    # Extract All Table
+                    data = scrape_complete_tbody(site_fipe)
+                    print(data)
         # save_delta_table_partitioned()
 
     close_browser(site_fipe)
