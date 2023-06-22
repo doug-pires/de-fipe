@@ -1,5 +1,8 @@
 import pytest
 from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType
+from dataclasses import dataclass, asdict, astuple
+from typing import List, Tuple
 
 
 @pytest.fixture(scope="session")
@@ -22,15 +25,3 @@ def spark_session():
 
     # Teardown - stop the SparkSession
     spark.stop()
-
-
-class Data:
-    def __init__(self, brand) -> None:
-        self.brand = brand
-
-
-brand1 = Data("Toyota")
-brand2 = Data("Ford")
-brand3 = Data("Chevrolet")
-data = [brand1.__dict__, brand2.__dict__, brand3.__dict__]
-print(data)

@@ -11,8 +11,8 @@ from fipe.scripts.utils import (
     click,
     close_browser,
 )
-from fipe.elt.extract.utils import scrape_options_month_year, scrape_options_brands
-from fipe.elt.load.utils import save_delta_table, read_delta_table
+from fipe.elt.extract.utils import scrape_options_month_year
+from fipe.elt.load.utils import save_delta_table
 from fipe.elt.transform.utils import transform_list_to_df
 from fipe.scripts.get_spark import SparkSessionManager
 import fipe.pipeline.read_configuration as cf
@@ -29,17 +29,11 @@ def main():
     bt = locate_bt(site_fipe, cf.xpath_search_car)
     click(bt)
     months = scrape_options_month_year(site_fipe)
-    brands = scrape_options_brands(site_fipe)
     df_months = transform_list_to_df(
         spark=spark, data=months, schema=cf.schema_reference_month
     )
-    df_brands = transform_list_to_df(spark=spark, data=brands, schema=cf.schema_brands)
     close_browser(site_fipe)
-    df_brands.show()
     save_delta_table(df_months, path_dev, "reference_month")
-    save_delta_table(df_brands, path_dev, "brands")
-    # df_months_as_delta = read_delta_table(spark, path_dev, "reference_month")
-    # df_months_as_delta.show()
 
 
 if __name__ == "__main__":

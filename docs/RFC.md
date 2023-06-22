@@ -100,6 +100,10 @@ Follow two **IMPORTANT PRINCIPLES** while we develop our pipeline:
 The website [FIPE](https://veiculos.fipe.org.br/) has its particularity.
 One instance:
 I can extract ALL *reference months* and *brands* with two automations, which is **OPEN BROWSER ---> CLICK THE BUTTON VEHICLES.**
+However I can have situations where, for a specific *reference month* I dont have a particular *brand*,*model* or *manufacturing year - fuel*
+The flow will be. Extract ALL *reference months* available and save it as Delta.
+Then, we will read the table *reference months* and iterate over them to add into the box, get all *brands*, *models* and *manufacturing year - fuel* available. We will save the Delta Table partitioned by *reference months*.
+
 Extract the *models* I need more automations, which is **ADD A SPECIFIC BRAND ---> EXTRACT ALL MODELS**
 Extract the *manufacturing year - fuel* for a specific *brand* and *model* I need one more automation **ADD A SPECIFIC MODEL ---> EXTRACT ALL MANUFACTURING YEAR - FUEL**
 

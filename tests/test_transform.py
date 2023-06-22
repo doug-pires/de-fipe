@@ -1,22 +1,22 @@
 import pytest
 from fipe.elt.transform.utils import transform_df_to_list
 from pyspark.sql.types import StructType, StructField, StringType
-from conftest import Data
+from conftest import convert_mock_data
+from dataclasses import dataclass
+from typing import Tuple
 
 
 def test_if_transform_df_to_list(spark_session):
-    # Given the Dataframe Brands
+    # Given the SCHEMA and the DATA to create the Dataframe Brands
     schema = StructType(
         [
             StructField("brand", StringType(), nullable=False),
         ]
     )
-    # data = [("Toyota",), ("Ford",), ("Chevrolet",)]
-    brand1 = Data("Toyota")
-    brand2 = Data("Ford")
-    brand3 = Data("Chevrolet")
-    data = [brand1.__dict__, brand2.__dict__, brand3.__dict__]
+
+    data = [("Toyota",), ("Ford",), ("Chevrolet",)]
     df_brands = spark_session.createDataFrame(data=data, schema=schema)
+
     # When we call the function to extract ALL BRANDS
     brand_list = transform_df_to_list(df_brands)
 

@@ -10,7 +10,11 @@ from fipe.scripts.utils import (
     add_on,
     close_browser,
 )
-from fipe.elt.extract.utils import scrape_options_models, scrape_manufacturing_year_fuel
+from fipe.elt.extract.utils import (
+    scrape_options_brands,
+    scrape_options_models,
+    scrape_manufacturing_year_fuel,
+)
 from fipe.elt.load.utils import (
     save_delta_table_partitioned,
     read_delta_table,
@@ -33,15 +37,14 @@ def main():
     from dev.dev_utils import path_dev
 
     df_month_year_as_delta = read_delta_table(spark, path_dev, "reference_month")
-    df_brands = read_delta_table(spark, path_dev, "brands")
     list_reference_month_year = transform_df_to_list(df_month_year_as_delta)
-    list_brands = transform_df_to_list(df_brands)
-    print(list_brands[:3])
-    print(type(list_brands[:3]))
     site_fipe = open_chrome(cf.url)
     scroll_to_element(site_fipe, cf.xpath_search_car)
     bt = locate_bt(site_fipe, cf.xpath_search_car)
     click(bt)
+
+    # Start Workflow
+    ################
     for month_year in list_reference_month_year[:1]:
         time.sleep(0.5)
         bt_month_year = locate_bt(
@@ -50,24 +53,27 @@ def main():
         )
         click(bt_month_year)
         time.sleep(0.5)
+
+        # For Each Reference Month extract all Brands Available
+        ################
+        list_brands = scrape_options_brands(site_fipe)
+
         add_on(bt_or_box=bt_month_year, info=month_year)
         for brand in list_brands[:2]:
             time.sleep(1)
             bt_brand = locate_bt(site_fipe, cf.xpath_bt_brand)
             add_on(bt_brand, brand)
+
+            # For Each Brand extract all Models Available
+            ################
             list_models = scrape_options_models(site_fipe)
-            # df_models = transform_list_to_df(spark, list_models, cf.schema_models)
-            # df_with_brand = add_column(df_models, "brand", brand)
-            # save_delta_table_partitioned(
-            #     df=df_with_brand,
-            #     path=path_dev,
-            #     delta_table_name="models",
-            #     partition_by="brand",
-            # )
+
             for model in list_models[:2]:
                 bt_model = locate_bt(driver=site_fipe, xpath=cf.xpath_bt_model)
                 click(bt_model)
                 add_on(bt_model, model)
+                # For Each Model extract all Manufacturing Year - Fuel Available
+                ################
                 list_manufacturing_year_fuel = scrape_manufacturing_year_fuel(site_fipe)
                 for manufacturing_year in list_manufacturing_year_fuel[:2]:
                     print(
