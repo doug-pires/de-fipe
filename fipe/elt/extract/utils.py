@@ -1,9 +1,10 @@
 # This file hold EXTRACT functions
 
-from bs4 import BeautifulSoup
-from typing import List, Dict
-from fipe.scripts.loggers import get_logger
+from typing import Dict, List
 
+from bs4 import BeautifulSoup
+
+from fipe.scripts.loggers import get_logger
 
 logger = get_logger(__name__)
 

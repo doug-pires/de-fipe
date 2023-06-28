@@ -1,13 +1,13 @@
 # This file hold TRANSFORMATION functions
 
-from pyspark.sql import SparkSession
-from pyspark.sql import DataFrame
-from pyspark.sql.types import StructType
-from typing import List
-from fipe.scripts.loggers import get_logger
+from typing import Dict, List
+
 import pyspark.sql.functions as F
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.types import StringType, StructField, StructType
+
 from fipe.scripts.get_spark import SparkSessionManager
-from pyspark.sql.types import StructType, StructField, StringType
+from fipe.scripts.loggers import get_logger
 
 logger = get_logger(__name__)
 
@@ -18,6 +18,13 @@ def transform_list_to_df(
     # Create a list of rows with the specified schema
     rows = [(value,) for value in data]
     df = spark.createDataFrame(rows, schema)
+    return df
+
+
+def transform_to_df(
+    spark: SparkSession, data: List[Dict], schema: StructType = None
+) -> DataFrame:
+    df = spark.createDataFrame(data, schema)
     return df
 
 
@@ -36,13 +43,31 @@ def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
 
 
 if __name__ == "__main__":
-    schema = StructType(
-        [
-            StructField("brand", StringType(), nullable=False),
-        ]
-    )
-    data = [("Toyota",), ("Ford",), ("Chevrolet",)]
-    spark = SparkSessionManager(__name__).get_spark_session()
-    df_brands = spark.createDataFrame(data=data, schema=schema)
+    import fipe.pipeline.read_configuration as cf
 
-    print(transform_df_to_list(df=df_brands))
+    data = [
+        {
+            "Mês de referência": "março de 2004",
+            "Código Fipe": "038003-2",
+            "Marca": "Acura",
+            "Modelo": "Integra GS 1.8",
+            "Ano Modelo": "1992 Gasolina",
+            "Autenticação": "jw754kf5fb",
+            "Data da consulta": "quarta-feira, 28 de junho de 2023 18:51",
+            "Preço Médio": "R$ 17.393,00",
+        },
+        {
+            "Mês de referência": "março de 2004",
+            "Código Fipe": "038003-2",
+            "Marca": "Acura",
+            "Modelo": "Integra GS 1.8",
+            "Ano Modelo": "1991 Gasolina",
+            "Autenticação": "jcfl56cfjn",
+            "Data da consulta": "quarta-feira, 28 de junho de 2023 18:51",
+            "Preço Médio": "R$ 15.958,00",
+        },
+    ]
+    spark = SparkSessionManager(__name__).get_spark_session()
+    df = spark.createDataFrame(data=data, schema=cf.schema_df_fipe_bronze)
+
+    df.show()

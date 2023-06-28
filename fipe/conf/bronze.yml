@@ -12,20 +12,30 @@ dataframes:
         type: StringType()
         nullable: false
 
-  brands:
-    columns:
-      - name: brand
-        type: StringType()
-        nullable: false
 
-  models:
+  df_fipe_bronze:
     columns:
-      - name: model
+      - name: "Mês de referência"
         type: StringType()
         nullable: false
-
-  manufacturing_year_fuel:
-    columns:
-      - name: manufacturing_year_fuel
+      - name: "Código Fipe"
         type: StringType()
-        nullable: false
+        nullable: true
+      - name: "Marca"
+        type: StringType()
+        nullable: true
+      - name: "Modelo"
+        type: StringType()
+        nullable: true
+      - name: "Ano Modelo"
+        type: StringType()
+        nullable: true
+      - name: "Autenticação"
+        type: StringType()
+        nullable: true
+      - name: "Data da consulta"
+        type: StringType()
+        nullable: true
+      - name: "Preço Médio"
+        type: StringType()
+        nullable: true

@@ -1,35 +1,32 @@
 """
-This module  according to BRAND extract all MODELS and MANUFACTURING YEAR / FUEL
+This module according to BRAND extract all MODELS and MANUFACTURING YEAR / FUEL
 Save in Bronze Path
 """
-from fipe.scripts.utils import (
-    open_chrome,
-    scroll_to_element,
-    locate_bt,
-    click,
-    add_on,
-    close_browser,
-)
-from fipe.elt.extract.utils import (
-    scrape_options_brands,
-    scrape_options_models,
-    scrape_manufacturing_year_fuel,
-    scrape_complete_tbody,
-)
-from fipe.elt.load.utils import (
-    save_delta_table_partitioned,
-    read_delta_table,
-)
-from fipe.elt.transform.utils import (
-    transform_list_to_df,
-    add_column,
-    transform_df_to_list,
-)
-from fipe.scripts.get_spark import SparkSessionManager
-import fipe.pipeline.read_configuration as cf
-from fipe.scripts.loggers import get_logger
 import time
 
+import fipe.pipeline.read_configuration as cf
+from fipe.elt.extract.utils import (
+    scrape_complete_tbody,
+    scrape_manufacturing_year_fuel,
+    scrape_options_brands,
+    scrape_options_models,
+)
+from fipe.elt.load.utils import read_delta_table, save_delta_table_partitioned
+from fipe.elt.transform.utils import (
+    add_column,
+    transform_df_to_list,
+    transform_list_to_df,
+)
+from fipe.scripts.get_spark import SparkSessionManager
+from fipe.scripts.loggers import get_logger
+from fipe.scripts.utils import (
+    add_on,
+    click,
+    close_browser,
+    locate_bt,
+    open_chrome,
+    scroll_to_element,
+)
 
 spark_manager = SparkSessionManager(app_name=__name__)
 spark = spark_manager.get_spark_session()
@@ -57,7 +54,7 @@ def main():
         )
         click(bt_month_year)
         time.sleep(0.5)
-
+        list_of_dicts = []
         # For Each Reference Month extract all Brands Available
         ################
         list_brands = scrape_options_brands(site_fipe)
@@ -96,7 +93,9 @@ def main():
 
                     # Extract All Table
                     data = scrape_complete_tbody(site_fipe)
-                    print(data)
+
+                    list_of_dicts.append(data)
+                    print(list_of_dicts)
         # save_delta_table_partitioned()
 
     close_browser(site_fipe)

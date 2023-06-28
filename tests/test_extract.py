@@ -1,5 +1,67 @@
 import pytest
-from fipe.elt.extract.utils import scrape_options_brands
+
+from fipe.elt.extract.utils import scrape_complete_tbody, scrape_options_brands
+
+
+def test_if_the_scrape_table_returns_type_dict():
+    # Given the table into the HTML tbody TAG within HTML
+    class Driver:
+        @property
+        def page_source(self):
+            html_fake = """<tbody>
+                    <tr>
+                        <td class="noborder"><p>Mês de referência:</p></td>
+                        <td><p>junho de 2023 </p></td>
+                    </tr>
+                    <tr>
+                        <td class="noborder"><p>Código Fipe:</p></td>
+                        <td><p>060003-2</p></td>
+                    </tr>
+                    <tr>
+                        <td class="noborder"><p>Marca:</p></td>
+                        <td><p>VolksWagen</p></td>
+                    </tr>
+                    <tr>
+                        <td class="noborder"><p>Modelo:</p></td>
+                        <td><p>Gol</p></td>
+                    </tr>
+                    <tr>
+                        <td class="noborder"><p>Ano Modelo:</p></td>
+                        <td><p>2010 Diesel</p></td>
+                    </tr>
+                    <tr>
+                        <td class="noborder"><p>Autenticação</p></td>
+                        <td><p>ABC</p></td>
+                    </tr>
+                    <tr>
+                        <td class="noborder"><p>Data da consulta</p></td>
+                        <td><p>quarta-feira, 28 de junho de 2023 18:34</p></td>
+                    </tr>
+                    <tr class="last">
+                        <td class="noborder"><p>Preço Médio</p></td>
+                        <td><p>R$ 64.440,00</p></td>
+                    </tr>
+                </tbody>"""
+            return html_fake
+
+    driver = Driver()
+    # When we call the function to extract ALL BRANDS
+    table_as_dict = scrape_complete_tbody(driver)
+
+    # Then returns the result into a list and MUST MATCH the expected list
+    expected_dict = {
+        "Mês de referência": "junho de 2023",
+        "Código Fipe": "060003-2",
+        "Marca": "VolksWagen",
+        "Modelo": "Gol",
+        "Ano Modelo": "2010 Diesel",
+        "Autenticação": "ABC",
+        "Data da consulta": "quarta-feira, 28 de junho de 2023 18:34",
+        "Preço Médio": "R$ 64.440,00",
+    }
+
+    assert table_as_dict == expected_dict
+    assert type(table_as_dict) == dict
 
 
 def test_if_extract_brands():

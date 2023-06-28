@@ -1,8 +1,5 @@
 import pytest
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType
-from dataclasses import dataclass, asdict, astuple
-from typing import List, Tuple
 
 
 @pytest.fixture(scope="session")
