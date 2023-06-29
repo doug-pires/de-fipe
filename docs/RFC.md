@@ -4,7 +4,9 @@
 
 # Overview
 Build a pipeline to extract, load and transform the data. According the data moves for each layer, the quality will increase.
-We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br/) which hold Average Vehicle Price.
+
+We are going to scrape data from the website [FIPE](https://veiculos.fipe.org.br/) which holds Average Vehicle Price.
+
 One instance : I've bought a car. The brand is **DPIRRE** , model **Azx - 92** , Manufacturing Year is **2019** and the kind of fuel is **Gasoline**
 
 | Brand  | Model    | Manufacturing Year | Fuel     | Price ( euros ) |
@@ -18,7 +20,7 @@ Over time my vehicle suffers depreciation or appreciation ( hard to happen ).
   - Schedule it
   - Build a report on top of Delta tables
 - **Non-Goals**: Pay attention if raises exception, because `xpaths` changes a lot.
-- **Milestone**: Install a Google Chrome browser into the Job Clusters to do the scrape for us.
+- **Milestone**: Install a Google Chrome browser into the Job Clusters to do the scrape for us. It will run as `--headless`
 - **Main Audience**: Other interested engineers and I.
 
 # Requirements ( High Level functional requirement )
@@ -30,13 +32,16 @@ Over time my vehicle suffers depreciation or appreciation ( hard to happen ).
 # Design Considerations
 
 ## Datasources
-- Website FIPE
+- Website [FIPE](https://veiculos.fipe.org.br/)
 - Volume of the data is not so big.
 ## Data Ingestion
 Functions for extraction will be on `fipe/elt/extract/utils.py`
-We will create scraper/extraction functions to extract the reference month, brands, models, manufacturing year and kind of fuel.
+
+We will create scraper/extraction functions to extract the *reference months*, and the complete table containing information about the vehicles.
+
 ## Data Storage
-- Functions for loading the tables will be on fipe/elt/load/utils.py
+Functions for loading the tables will be on `fipe/elt/load/utils.py`
+
 We will storage it on `dbfs` to mimic a mount point for ADLS Gen2 Containers.
 - `mnt/bronze`
 - `mnt/silver`
@@ -54,10 +59,12 @@ We will use Import Mode on Power BI Desktop to create the report.
 > Design Principles help to define the common rules & standards that need to be followed while implementing the system. These principles can help build a common understanding across various teams using the central data platform.
 
 ## Costs
-For being a small workload we are going to use **Single Node** cluster.
+For being a small workload we are going to use **Single Node**  cluster `Standard_DS3_v2` with 4vCores
 
 ## Operational
 Log almost everything important for us. Especially Browser, Buttons the automation in general.
+
+We will use a `StreamHandler` to create our Logger to log out info to our `stdout`
 
 ## Performance
 Follow two **IMPORTANT PRINCIPLES** while we develop our pipeline:
@@ -99,29 +106,41 @@ Follow two **IMPORTANT PRINCIPLES** while we develop our pipeline:
 The website [FIPE](https://veiculos.fipe.org.br/) has its particularity.
 One instance:
 I can extract ALL *reference months* and *brands* with two automations, which is **OPEN BROWSER ---> CLICK THE BUTTON VEHICLES.**
-However I can have situations where, for a specific *reference month* I dont have a particular *brand*,*model* or *manufacturing year - fuel*.
+However I can have situations where, for a specific *reference month* I don't have a particular *brand*,*model* or *manufacturing year - fuel*.
+
 The flow will be ---> Extract ALL *reference months* available and save it as Delta.
+
 Then, we will read the table *reference months* and iterate over them to add into the box, get all *brands*, *models* and *manufacturing year - fuel* available for that *reference month* in the context.
+
 There is a function to extract the HTML table over the tag `<tbody> Table </tbody>` to return as Dict and appending into a List.
-When ALL the *brands*, *models* and *manufacturing year - fuel* ends for a SPECIFIC *reference month* , will be generated a `List[Dict]`, transform it to a PySpark DataFrame and save it on our `mnt/bronze`.
+
+When ALL *brands*, *models* and *manufacturing year - fuel* are done for a SPECIFIC *reference month* , will be generated a `List[Dict]`, transform it to a PySpark DataFrame and save it on our `mnt/bronze`.
 
 >The workflow stated above will run until all data be scraped.
 The final result on `Bronze Layer` will be a Delta Table partitioned by *reference months*.
 
 ## Workflow
 - Task 1:
+  1. Install Google Chrome in the Job Cluster.
+- Task 2:
   1. Open Browser
   2. Extract all *reference months*
   3. Save them as Delta Tables
   4. Close Browser
-- Task 2:
+- Task 3:
    1. Open Browser
-   2. Read *reference months* and iterate over them to extract *brands*,*models*,**manufacturing year - fuel*
-   3. After finishing one *reference month* we will save as Delta Table partiotined by reference month
+   2. Read *reference months* and iterate over them to extract *brands*,*models*, *manufacturing year - fuel*
+   3. After finishing one *reference month* we will save as Delta Table partitioned by *reference month*
    4. Repeat the Cycle
-- Task3:
-   1. Read the tables on `Bronze` apply data cleansing, validation
-   2. Save on `Gold Layer`
+- Task 4:
+  1. Read the tables on `Bronze` apply data cleansing, validation, add new columns and save it as Delta Table into `Silver Layer`
+- Task 5:
+   1. Create our facts and dimensions to save it on `Gold Layer`
 
 ## Data Assets
-Once we are thinking about extraction
+- `Bronze Layer` we will have Delta Table PARTITIONED BY *reference month* then the parquet files.
+- `Silver Layer` basically the same Delta Table however with more columns.
+  - Containing First Date of the *reference month*
+  - Column REFERENCE YEAR
+  - Probably other info columns
+- `Gold Layer` create our fact and dimensions.
