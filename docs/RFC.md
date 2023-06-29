@@ -23,7 +23,7 @@ Over time my vehicle suffers depreciation or appreciation ( hard to happen ).
 - **Milestone**: Install a Google Chrome browser into the Job Clusters to do the scrape for us. It will run as `--headless`
 - **Main Audience**: Other interested engineers and I.
 
-# Requirements ( High Level functional requirement )
+# Requirements
 1. Run the pipeline once a month.
 2. Use [Delta Lake](https://delta.io/) as Storage framework.
 3. Use Functional Programming & OOP for some cases.
@@ -144,3 +144,5 @@ The final result on `Bronze Layer` will be a Delta Table partitioned by *referen
   - Column REFERENCE YEAR
   - Probably other info columns
 - `Gold Layer` create our fact and dimensions.
+
+# Alternatives
