@@ -11,12 +11,12 @@ from fipe.elt.extract.utils import (
     scrape_options_brands,
     scrape_options_models,
 )
-from fipe.elt.load.utils import read_delta_table, save_delta_table_partitioned
-from fipe.elt.transform.utils import (
-    add_column,
-    transform_df_to_list,
-    transform_list_to_df,
+from fipe.elt.load.utils import (
+    read_delta_table,
+    save_delta_table,
+    save_delta_table_partitioned,
 )
+from fipe.elt.transform.utils import transform_df_to_list, transform_to_df
 from fipe.scripts.get_spark import SparkSessionManager
 from fipe.scripts.loggers import get_logger
 from fipe.scripts.utils import (
@@ -46,7 +46,8 @@ def main():
 
     # Start Workflow
     ################
-    for month_year in list_reference_month_year[:1]:
+
+    for month_year in list_reference_month_year[:2]:
         time.sleep(0.5)
         bt_month_year = locate_bt(
             driver=site_fipe,
@@ -60,7 +61,7 @@ def main():
         list_brands = scrape_options_brands(site_fipe)
 
         add_on(bt_or_box=bt_month_year, info=month_year)
-        for brand in list_brands[:2]:
+        for brand in list_brands[:1]:
             time.sleep(1)
             bt_brand = locate_bt(site_fipe, cf.xpath_bt_brand)
             add_on(bt_brand, brand)
@@ -95,8 +96,18 @@ def main():
                     data = scrape_complete_tbody(site_fipe)
 
                     list_of_dicts.append(data)
-                    print(list_of_dicts)
-        # save_delta_table_partitioned()
+        print(list_of_dicts)
+        df = transform_to_df(spark, list_of_dicts, cf.schema_df_fipe_bronze)
+        print(df.count())
+        print(df.show())
+        # save_delta_table(df=df, path=path_dev, delta_table_name="fipe_bronze")
+        # save_delta_table_partitioned(
+        #     df=df,
+        #     path=path_dev,
+        #     delta_table_name="fipe_bronze",
+        #     partition_by="reference_month",
+        # )
+    list_of_dicts.clear()
 
     close_browser(site_fipe)
 

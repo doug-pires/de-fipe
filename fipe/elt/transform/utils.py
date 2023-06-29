@@ -42,6 +42,17 @@ def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
     return df_new_column
 
 
+def change_all_column_names(df: DataFrame, column_mapping: Dict) -> DataFrame:
+    # Create a new DataFrame with renamed columns
+    renamed_dataframe = df
+    for current_column, new_column in column_mapping.items():
+        renamed_dataframe = renamed_dataframe.withColumnRenamed(
+            current_column, new_column
+        )
+
+    return renamed_dataframe
+
+
 if __name__ == "__main__":
     import fipe.pipeline.read_configuration as cf
 

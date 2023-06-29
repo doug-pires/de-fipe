@@ -1,5 +1,6 @@
 from delta.tables import DeltaTable
 from pyspark.sql import SparkSession
+
 from fipe.scripts.loggers import get_logger
 
 """

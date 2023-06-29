@@ -1,10 +1,18 @@
-import yaml
-from pathlib import Path
 import pathlib
-from typing import Dict, Any, List
-from fipe.scripts.loggers import get_logger
-from pyspark.sql.types import *
+from pathlib import Path
+from typing import Any, Dict, Union
 
+import yaml
+from pyspark.sql.types import (
+    ArrayType,
+    DateType,
+    IntegerType,
+    StringType,
+    StructField,
+    StructType,
+)
+
+from fipe.scripts.loggers import get_logger
 
 # Get Logger
 logger = get_logger(__name__)
@@ -42,7 +50,9 @@ def get_configs() -> Dict:
     return configs_dict
 
 
-def get_schema_from(config: Dict, dataframe_name: str) -> StructType:
+def get_schema_from(
+    config: Dict, dataframe_name: str
+) -> Union[StructType, StringType, IntegerType, DateType, ArrayType]:
     """
     In this function,we get the config file from the YML file.
     The schema information is provided as strings, such as StringType() and "ArrayType(StringType())".
@@ -78,19 +88,18 @@ def get_schema_from(config: Dict, dataframe_name: str) -> StructType:
 def get_base_path(config: Dict) -> str:
     try:
         base_path = config["base_path"]
-        logger.info(f"Base Path loaded successfully")
+        logger.info("Base Path loaded successfully")
     except KeyError:
-        logger.error(f"Base Path key does not exist in the YML file")
+        logger.error("Base Path key does not exist in the YML file")
         return exit()
     return base_path
 
 
 if __name__ == "__main__":
-    configs = get_configs(paths_configs)
+    configs = get_configs()
     config_bronze = configs["bronze"]
     schema = get_schema_from(config_bronze, "reference_month")
-    schema_brands = get_schema_from(config_bronze, "brands")
-    print(schema_brands)
+
     print(schema)
     #  base_bronze_path = get_base_path(config_bronze)
     # schema = get_schema_from(config_bronze, "brands")

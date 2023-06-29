@@ -1,13 +1,13 @@
 # This file hold SINK functions
 
-from pyspark.sql import SparkSession
-from fipe.scripts.get_spark import SparkSessionManager
-from pyspark.sql import DataFrame
-from pyspark.sql.types import StructType, StructField, StringType
 from typing import List
-from fipe.scripts.loggers import get_logger
-import pyspark.sql.functions as F
 
+import pyspark.sql.functions as F
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.types import StringType, StructField, StructType
+
+from fipe.scripts.get_spark import SparkSessionManager
+from fipe.scripts.loggers import get_logger
 
 logger = get_logger(__name__)
 
@@ -50,7 +50,3 @@ if __name__ == "__main__":
     )
     spark = spark_manager.get_spark_session()
     spark_manager.print_config()
-
-    schema = StructType([StructField("reference_month", StringType(), False)])
-    df = transform_list_to_df(spark, data=["maio/2023", "abril/2023"], schema=schema)
-    save_delta_table(df=df, path=path_dev, delta_table_name="months")

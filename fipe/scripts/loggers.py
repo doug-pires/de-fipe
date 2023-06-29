@@ -1,6 +1,5 @@
 import logging
 
-
 # Create the Formatter
 formatter = logging.Formatter(
     "%(asctime)s :-: %(levelname)s :-: %(name)s :-: %(message)s"

@@ -1,14 +1,14 @@
 # import time
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service as ChromeService
 import time
-from fipe.scripts.loggers import get_logger
+
+from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
+
+from fipe.scripts.loggers import get_logger
 
 logger = get_logger(__name__)
 
@@ -43,7 +43,7 @@ def close_browser(driver):
 
 
 # General Functions
-def locate_bt(driver: ChromeDriverManager, xpath: str):
+def locate_bt(driver, xpath: str):
     bt_general = driver.find_element(By.XPATH, xpath)
     return bt_general
 
@@ -57,7 +57,7 @@ def scroll_to_element(driver, xpath):
         return logger.error("Not locating element on Browser")
 
 
-def click_with_driver(driver: ChromeDriverManager, bt_or_box):
+def click_with_driver(driver, bt_or_box):
     js_code = "arguments[0].click();"
     return driver.execute_script(js_code, bt_or_box)
 
