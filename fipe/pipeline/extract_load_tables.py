@@ -16,7 +16,11 @@ from fipe.elt.load.utils import (
     save_delta_table,
     save_delta_table_partitioned,
 )
-from fipe.elt.transform.utils import transform_df_to_list, transform_to_df
+from fipe.elt.transform.utils import (
+    change_all_column_names,
+    transform_df_to_list,
+    transform_to_df,
+)
 from fipe.scripts.get_spark import SparkSessionManager
 from fipe.scripts.loggers import get_logger
 from fipe.scripts.utils import (
@@ -98,15 +102,16 @@ def main():
                     list_of_dicts.append(data)
         print(list_of_dicts)
         df = transform_to_df(spark, list_of_dicts, cf.schema_df_fipe_bronze)
-        print(df.count())
-        print(df.show())
+        df = change_all_column_names(df, cf.mapping_bronze_columns)
+
         # save_delta_table(df=df, path=path_dev, delta_table_name="fipe_bronze")
-        # save_delta_table_partitioned(
-        #     df=df,
-        #     path=path_dev,
-        #     delta_table_name="fipe_bronze",
-        #     partition_by="reference_month",
-        # )
+        save_delta_table_partitioned(
+            df=df,
+            path=path_dev,
+            mode="append",
+            delta_table_name="fipe_bronze",
+            partition_by="reference_month",
+        )
     list_of_dicts.clear()
 
     close_browser(site_fipe)

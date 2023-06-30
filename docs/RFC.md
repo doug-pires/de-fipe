@@ -138,11 +138,23 @@ The final result on `Bronze Layer` will be a Delta Table partitioned by *referen
    1. Create our facts and dimensions to save it on `Gold Layer`
 
 ## Data Assets
-- `Bronze Layer` we will have Delta Table PARTITIONED BY *reference month* then the parquet files.
-- `Silver Layer` basically the same Delta Table however with more columns.
-  - Containing First Date of the *reference month*
-  - Column REFERENCE YEAR
-  - Probably other info columns
-- `Gold Layer` create our fact and dimensions.
+`Bronze Layer` we will have Delta Table `fipe_bronze` PARTITIONED BY *reference month* then the parquet files.
+- Columns :
+  - reference_month string
+  - fipe_code string
+  - brand string
+  - model string
+  - manufacturing year string
+  - authentication string
+  - query_date string
+  - average_price string
+> We are changing the name of the columns, because in portuguese, we have spaces, punctuation, then Delta Lake does not allow carry on saving the table.
+
+`Silver Layer` basically the same Delta Table however with more columns.
+- Containing First Date of the *reference month*
+- Column REFERENCE YEAR
+- Probably other info columns
+
+`Gold Layer` create our fact and dimensions.
 
 # Alternatives

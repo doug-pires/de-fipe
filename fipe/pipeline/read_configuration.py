@@ -18,8 +18,13 @@ xpath_bt_search = __webscraper_config["xpaths"]["xpath_bt_search"]
 
 # Get Bronze Config
 __bronze_config = configs["bronze"]
-schema_brands = get_schema_from(__bronze_config, "reference_month")
+schema_df_reference_month = get_schema_from(__bronze_config, "reference_month")
 schema_df_fipe_bronze = get_schema_from(__bronze_config, "df_fipe_bronze")
 
+
+# Get Mapping Columns for Bronze
+mapping_bronze_columns = __bronze_config["mapping_columns"]
+
+
 if __name__ == "__main__":
-    print(schema_df_fipe_bronze)
+    print(mapping_bronze_columns)

@@ -97,9 +97,8 @@ def get_base_path(config: Dict) -> str:
 
 if __name__ == "__main__":
     configs = get_configs()
-    config_bronze = configs["bronze"]
-    schema = get_schema_from(config_bronze, "reference_month")
+    mapping = configs["bronze"]["mapping_columns"]
 
-    print(schema)
+    print(mapping)
     #  base_bronze_path = get_base_path(config_bronze)
     # schema = get_schema_from(config_bronze, "brands")

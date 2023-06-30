@@ -59,7 +59,7 @@ def test_transform_list_of_dicts_to_df(spark_session):
         spark_session, data=list_of_dicts, schema=cf.schema_df_fipe_bronze
     )
 
-    # Then returns me a DF with these columns
+    # Then returns me a DF with these columns and assert these columns in my expcted list
     expected_columns = [
         "Mês de referência",
         "Código Fipe",
@@ -112,4 +112,4 @@ def test_change_all_coluns_names_according_to_mapping(spark_session):
 
 
 if __name__ == "__main__":
-    pytest.main(["-v", "--setup-show"])
+    pytest.main(["-v", "--setup-show", "-k", "transform"])

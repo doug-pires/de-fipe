@@ -39,3 +39,17 @@ dataframes:
       - name: "Preço Médio"
         type: StringType()
         nullable: true
+
+mapping_columns:
+  "Mês de referência": reference_month
+  "Código Fipe": fipe_code
+  "Marca": brand
+  "Modelo": model
+  "Ano Modelo": manufacturing_year
+  "Autenticação": authentication
+  "Data da consulta": query_date
+  "Preço Médio": average_price
+
+
+
+
