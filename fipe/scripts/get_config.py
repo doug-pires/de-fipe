@@ -97,7 +97,7 @@ def get_base_path(config: Dict) -> str:
 
 if __name__ == "__main__":
     configs = get_configs()
-    mapping = configs["bronze"]["mapping_columns"]
+    mapping = configs["bronze"]["df_fipe_bronze_new_columns"]
 
     print(mapping)
     #  base_bronze_path = get_base_path(config_bronze)

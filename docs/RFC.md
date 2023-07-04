@@ -117,7 +117,7 @@ There is a function to extract the HTML table over the tag `<tbody> Table </tbod
 When ALL *brands*, *models* and *manufacturing year - fuel* are done for a SPECIFIC *reference month* , will be generated a `List[Dict]`, transform it to a PySpark DataFrame and save it on our `mnt/bronze`.
 
 >The workflow stated above will run until all data be scraped.
-The final result on `Bronze Layer` will be a Delta Table partitioned by *reference months*.
+The final result on `Bronze Layer` will be a Delta Table partitioned by *reference months* and *brands*.
 
 ## Workflow
 - Task 1:

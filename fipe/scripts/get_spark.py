@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 @dataclass
 class SparkSessionManager:
     app_name: str
-    additional_options: dict = None
+    additional_options: dict | None = None
     __spark_session = None
 
     DEFAULT_DELTA_OPTIONS = {

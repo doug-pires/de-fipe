@@ -1,7 +1,4 @@
 # This file hold EXTRACT functions
-
-from typing import Dict, List
-
 from bs4 import BeautifulSoup
 
 from fipe.scripts.loggers import get_logger
@@ -9,8 +6,7 @@ from fipe.scripts.loggers import get_logger
 logger = get_logger(__name__)
 
 
-def scrape_complete_tbody(driver) -> Dict:
-    logger.info("Extract information from table")
+def scrape_complete_tbody(driver, new_columns: list[str]) -> dict:
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -36,29 +32,18 @@ def scrape_complete_tbody(driver) -> Dict:
         if tr.string not in keys_to_remove
     ]
 
-    new_keys = [
-        "Mês de referência",
-        "Código Fipe",
-        "Marca",
-        "Modelo",
-        "Ano Modelo",
-        "Autenticação",
-        "Data da consulta",
-        "Preço Médio",
-    ]
-
-    complete_info = dict(zip(new_keys, value_tab))
+    complete_info = dict(zip(new_columns, value_tab))
 
     return complete_info
 
 
-def scrape_options_month_year(driver) -> List:
+def scrape_options_month_year(driver) -> list[str]:
     """
     This function extracts
     All Month-Year available to iterate over it.
     """
 
-    logger.info("Extracting information from all Reference Months available")
+    logger.info("Extracting all Reference Months available")
     # I can pick the values AVAILABLE, or using Requests or BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -76,12 +61,12 @@ def scrape_options_month_year(driver) -> List:
     return months_years_available
 
 
-def scrape_options_brands(driver) -> List:
+def scrape_options_brands(driver) -> list[str]:
     """
     This function extracts
     All Brands available to iterate over it.
     """
-    logger.info("Extracting information from all Brands available")
+    logger.info("Extracting all Brands available")
     # I can pick the values AVAILABLE, or using Requests or BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -99,8 +84,8 @@ def scrape_options_brands(driver) -> List:
     return brands
 
 
-def scrape_options_models(driver) -> List:
-    logger.info("Extracting information from models available depending on Brands")
+def scrape_options_models(driver) -> list[str]:
+    logger.info("Extracting all models available")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
     options_models_years = soup.find("div", attrs={"class": "step-2"})
@@ -115,8 +100,8 @@ def scrape_options_models(driver) -> List:
 
 
 # brand: str, model: str,
-def scrape_manufacturing_year_fuel(driver) -> List:
-    logger.info("Extracting information from MANUFACTURING YEAR - FUEL")
+def scrape_manufacturing_year_fuel(driver) -> list[str]:
+    logger.info("Extracting all MANUFACTURING YEAR - FUEL available")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
 

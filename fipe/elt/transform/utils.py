@@ -4,7 +4,7 @@ from typing import Dict, List
 
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql.types import StringType, StructField, StructType
+from pyspark.sql.types import StructType
 
 from fipe.scripts.get_spark import SparkSessionManager
 from fipe.scripts.loggers import get_logger
@@ -40,17 +40,6 @@ def transform_df_to_list(df: DataFrame):
 def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
     df_new_column = df.withColumn(col_name, F.lit(value))
     return df_new_column
-
-
-def change_all_column_names(df: DataFrame, column_mapping: Dict) -> DataFrame:
-    # Create a new DataFrame with renamed columns
-    renamed_dataframe = df
-    for current_column, new_column in column_mapping.items():
-        renamed_dataframe = renamed_dataframe.withColumnRenamed(
-            current_column, new_column
-        )
-
-    return renamed_dataframe
 
 
 if __name__ == "__main__":

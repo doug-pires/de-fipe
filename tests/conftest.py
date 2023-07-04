@@ -1,6 +1,8 @@
 import pytest
 from pyspark.sql import SparkSession
 
+from fipe.pipeline.read_configuration import new_columns_df_bronze
+
 
 @pytest.fixture(scope="session")
 def spark_session():
@@ -22,3 +24,13 @@ def spark_session():
 
     # Teardown - stop the SparkSession
     spark.stop()
+
+
+@pytest.fixture(scope="session")
+def config_new_columns_df_bronze():
+    """
+    PyTest fixture for share the New Coluns between different tests.
+
+    This fixture creates a SparkSession and automatically closes it at the end of the test session.
+    """
+    return new_columns_df_bronze

@@ -12,44 +12,41 @@ dataframes:
         type: StringType()
         nullable: false
 
-
   df_fipe_bronze:
     columns:
-      - name: "Mês de referência"
+      - name: "reference_month"
         type: StringType()
         nullable: false
-      - name: "Código Fipe"
+      - name: "fipe_code"
         type: StringType()
         nullable: true
-      - name: "Marca"
+      - name: "brand"
         type: StringType()
         nullable: true
-      - name: "Modelo"
+      - name: "model"
         type: StringType()
         nullable: true
-      - name: "Ano Modelo"
+      - name: "manufacturing_year"
         type: StringType()
         nullable: true
-      - name: "Autenticação"
+      - name: "authentication"
         type: StringType()
         nullable: true
-      - name: "Data da consulta"
+      - name: "query_date"
         type: StringType()
         nullable: true
-      - name: "Preço Médio"
+      - name: "average_price"
         type: StringType()
         nullable: true
 
-mapping_columns:
-  "Mês de referência": reference_month
-  "Código Fipe": fipe_code
-  "Marca": brand
-  "Modelo": model
-  "Ano Modelo": manufacturing_year
-  "Autenticação": authentication
-  "Data da consulta": query_date
-  "Preço Médio": average_price
-
-
+df_fipe_bronze_new_columns:
+  - reference_month
+  - fipe_code
+  - brand
+  - model
+  - manufacturing_year
+  - authentication
+  - query_date
+  - average_price
 
 

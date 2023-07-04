@@ -23,8 +23,9 @@ schema_df_fipe_bronze = get_schema_from(__bronze_config, "df_fipe_bronze")
 
 
 # Get Mapping Columns for Bronze
-mapping_bronze_columns = __bronze_config["mapping_columns"]
+new_columns_df_bronze = __bronze_config["df_fipe_bronze_new_columns"]
 
 
 if __name__ == "__main__":
-    print(mapping_bronze_columns)
+    print(new_columns_df_bronze)
+    print(sorted(new_columns_df_bronze))
