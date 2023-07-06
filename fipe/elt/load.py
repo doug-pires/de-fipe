@@ -9,7 +9,8 @@ logger = get_logger(__name__)
 
 
 def join_path_table(path: str, delta_table_name: str) -> str:
-    """_summary_
+    """
+    Join a Path table.
 
     Args:
         path (str): Path in the Storage
