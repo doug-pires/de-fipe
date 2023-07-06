@@ -2,7 +2,7 @@ import pytest
 from pyspark.sql.types import StringType, StructField, StructType
 
 import fipe.pipeline.read_configuration as cf
-from fipe.elt.transform.utils import (
+from fipe.elt.transform.transform import (
     change_all_column_names,
     transform_df_to_list,
     transform_to_df,

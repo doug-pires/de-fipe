@@ -5,9 +5,9 @@ Save in Bronze Path as Delta Table"""
 
 
 import fipe.pipeline.read_configuration as cf
-from fipe.elt.extract.utils import scrape_options_month_year
-from fipe.elt.load.utils import save_delta_table
-from fipe.elt.transform.utils import transform_list_to_df
+from fipe.elt.extract import scrape_options_month_year
+from fipe.elt.load import save_delta_table
+from fipe.elt.transform import transform_list_to_df
 from fipe.scripts.get_spark import SparkSessionManager
 from fipe.scripts.utils import (
     click,
