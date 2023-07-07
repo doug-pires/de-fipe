@@ -18,6 +18,14 @@ from fipe.scripts.loggers import get_logger
 logger = get_logger(__name__)
 
 
+# Path to read my configurations
+def get_paths_yml_configs():
+    pasta_conf = Path().cwd() / "fipe/conf"
+    caminhos_arquivos_conf = list(pasta_conf.glob("*.yml"))
+
+    return caminhos_arquivos_conf
+
+
 def __read_config(path_config: str | Path):
     try:
         config = yaml.safe_load(pathlib.Path(path_config).read_text())
@@ -27,21 +35,16 @@ def __read_config(path_config: str | Path):
         return logger.error("Configuration file not provided")
 
 
-# Path to read my configurations
-path_scraper_config = Path().cwd() / "fipe/conf/scraper_config.yml"
-path_bronze_config = Path().cwd() / "fipe/conf/bronze.yml"
-path_silver_config = Path().cwd() / "fipe/conf/silver.yml"
-paths_configs_files = [path_scraper_config, path_bronze_config, path_silver_config]
-
-
 def get_configs(tag: str):
-    """Read all configuration files and return it as a dictionary
+    """
+    Read all configuration files and return it as a dictionary
 
 
     Returns:
         Dict: Nested Dict on Configuration
     """
-    configs_list = [__read_config(path) for path in paths_configs_files]
+    paths = get_paths_yml_configs()
+    configs_list = [__read_config(path) for path in paths]
     configs_dict = {
         config.get("tag"): {k: v for k, v in config.items() if k != "tag"}
         for config in configs_list
@@ -96,8 +99,7 @@ def get_base_path(config: Dict) -> str:
 
 if __name__ == "__main__":
     configs_bronze = get_configs("bronze")
-    configs_silver = get_configs("silver")
-    schema = get_schema_from(configs_bronze, dataframe_name="df_fipe_bronze")
-    print(schema)
-    #  base_bronze_path = get_base_path(config_bronze)
-    # schema = get_schema_from(config_bronze, "brands")
+    configs_silver = get_configs("webscraper")
+    print(configs_bronze)
+    print(configs_silver)
+    # schema = get_schema_from(configs_bronze, dataframe_name="df_fipe_bronze")

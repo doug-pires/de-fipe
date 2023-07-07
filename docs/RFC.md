@@ -157,4 +157,6 @@ The final result on `Bronze Layer` will be a Delta Table partitioned by *referen
 
 `Gold Layer` create our fact and dimensions.
 
-# Alternatives
+# Appendix
+
+## Alternatives
