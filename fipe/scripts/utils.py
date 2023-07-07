@@ -3,7 +3,6 @@
 import time
 
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
@@ -16,11 +15,14 @@ from fipe.scripts.loggers import get_logger
 logger = get_logger(__name__)
 
 
-def open_chrome(url: str):
+def open_chrome(url: str, headless: bool = True):
     options = webdriver.ChromeOptions()
+    if headless:
+        options.add_argument("--headless")
     options.add_experimental_option("detach", True)
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.add_argument("--disable-dev-shm-usage")
+
     options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()),
@@ -32,7 +34,7 @@ def open_chrome(url: str):
         time.sleep(3)
         logger.info("Loaded Google Chrome")
         return driver
-    except [WebDriverException]:
+    except Exception:
         logger.error("This site can't be reached")
         return close_browser(driver)
 

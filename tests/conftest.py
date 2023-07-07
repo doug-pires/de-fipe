@@ -1,7 +1,20 @@
+from dataclasses import dataclass, field
+from pathlib import Path
+
 import pytest
 from pyspark.sql import SparkSession
 
-from fipe.pipeline.read_configuration import new_columns_df_bronze
+from fipe.elt.extract import scrape_complete_tbody, scrape_options_brands
+from fipe.pipeline.read_configuration import (
+    new_columns_df_bronze,
+    xpath_bt_brand,
+    xpath_bt_manufacturing_year_fuel,
+    xpath_bt_model,
+    xpath_bt_month_year,
+    xpath_bt_search,
+    xpath_search_car,
+)
+from fipe.scripts.utils import add_on, click, locate_bt, open_chrome, scroll_to_element
 
 
 @pytest.fixture(scope="session")
@@ -34,3 +47,78 @@ def config_new_columns_df_bronze():
     This fixture creates a SparkSession and automatically closes it at the end of the test session.
     """
     return new_columns_df_bronze
+
+
+@dataclass
+class DriverFixture:
+    data: str
+    page_source: str = field(init=False)
+
+    def __post_init__(self):
+        path = Path().cwd() / f"tests/test_data/{self.data}.html"
+
+        with open(path, "r") as file:
+            self.page_source = file.read()
+
+
+@pytest.fixture(scope="session")
+def driver_fixture_brands():
+    return DriverFixture("brands")
+
+
+# @pytest.fixture(scope="session")
+# def driver_table_fixture():
+#     return DriverFixture("table_fipe")
+
+
+@pytest.fixture(scope="function")
+def table_fipe_fixture():
+    # Given the PRE-CONDITIONS containing the HTML table tbody
+    # Open browser.
+    example_values = ["junho/2023", "Nissan", "Sentra GLE", "1995 Gasolina"]
+
+    # Open Webdriver
+    driver = open_chrome(url="https://veiculos.fipe.org.br/")
+
+    # Scroll to Button
+    scroll_to_element(driver, xpath_search_car)
+    # Locate Bt Search Car
+    bt_car = locate_bt(driver, xpath_search_car)
+    click(bt_car)
+
+    # Locate BT to add Month-Year and Click
+    bt_month_year = locate_bt(driver, xpath_bt_month_year)
+    click(bt_month_year)
+    add_on(bt_month_year, example_values[0])
+
+    # Locate BT to add brand and Click
+    bt_brand = locate_bt(driver, xpath_bt_brand)
+    click(bt_brand)
+    add_on(bt_brand, example_values[1])
+
+    # Locate BT to add model and Click
+    bt_model = locate_bt(driver, xpath_bt_model)
+    click(bt_model)
+    add_on(bt_model, example_values[2])
+
+    # Locate BT to add Manufacturing Year and Fuel to click
+    bt_manufacturing_year_fuel = locate_bt(driver, xpath_bt_manufacturing_year_fuel)
+    click(bt_manufacturing_year_fuel)
+    add_on(bt_manufacturing_year_fuel, example_values[3])
+
+    bt_search = locate_bt(driver, xpath_bt_search)
+    click(bt_search)
+
+    new_columns_df_bronze
+
+    # driver = driver_table_fixture
+    # When we call the function to extract ALL BRANDS
+    table_as_dict = scrape_complete_tbody(driver, new_columns_df_bronze)
+    driver.close()
+
+    # Since it's DYNAMICALLY the field AUTEHNTICATION
+    # The Query Date will be hard to match, we will HARDCODE these values.
+
+    table_as_dict["authentication"] = "ABC"
+    table_as_dict["query_date"] = "quarta-feira, 28 de junho de 2023 18:34"
+    return table_as_dict

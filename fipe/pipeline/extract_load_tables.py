@@ -35,7 +35,7 @@ def main():
 
     df_month_year_as_delta = read_delta_table(spark, path_dev, "reference_month")
     list_reference_month_year = transform_df_to_list(df_month_year_as_delta)
-    site_fipe = open_chrome(cf.url)
+    site_fipe = open_chrome(cf.url, False)
     scroll_to_element(site_fipe, cf.xpath_search_car)
     bt = locate_bt(site_fipe, cf.xpath_search_car)
     click(bt)
@@ -43,7 +43,7 @@ def main():
     # Start Workflow
     ################
 
-    for month_year in list_reference_month_year[:2]:
+    for month_year in list_reference_month_year[:1]:
         time.sleep(1)
         bt_month_year = locate_bt(
             driver=site_fipe,

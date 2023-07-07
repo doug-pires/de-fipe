@@ -1,7 +1,7 @@
 import pytest
 from pyspark.sql.types import DateType, IntegerType, StringType, StructField, StructType
 
-from fipe.scripts.get_config import get_configs, get_schema_from
+from fipe.scripts.get_config import get_schema_from
 
 
 def test_returns_correct_schema():

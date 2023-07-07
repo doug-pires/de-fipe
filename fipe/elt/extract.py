@@ -64,7 +64,8 @@ def scrape_options_month_year(driver) -> list[str]:
 def scrape_options_brands(driver) -> list[str]:
     """
     This function extracts
-    All Brands available to iterate over it.
+    All Brands available in the HTML to iterate over it.
+    Remove the empty STRINGS -> ""
     """
     logger.info("Extracting all Brands available")
     # I can pick the values AVAILABLE, or using Requests or BeautifulSoup
@@ -79,7 +80,11 @@ def scrape_options_brands(driver) -> list[str]:
         },
     )
 
-    brands = [brand.text for brand in options_brands[0].children if brand.text != ""]
+    brands = [
+        brand.text.strip()
+        for brand in options_brands[0].children
+        if brand.text.strip() != "" and brand.text.strip() != " "
+    ]
 
     return brands
 
