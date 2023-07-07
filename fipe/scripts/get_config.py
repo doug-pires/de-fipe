@@ -1,6 +1,6 @@
 import pathlib
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Dict, Union
 
 import yaml
 from pyspark.sql.types import (
@@ -18,7 +18,7 @@ from fipe.scripts.loggers import get_logger
 logger = get_logger(__name__)
 
 
-def __read_config(path_config) -> Dict[str, Any]:
+def __read_config(path_config: str | Path):
     try:
         config = yaml.safe_load(pathlib.Path(path_config).read_text())
         logger.info("Read the config file")
@@ -30,28 +30,27 @@ def __read_config(path_config) -> Dict[str, Any]:
 # Path to read my configurations
 path_scraper_config = Path().cwd() / "fipe/conf/scraper_config.yml"
 path_bronze_config = Path().cwd() / "fipe/conf/bronze.yml"
-paths_configs_files = [path_scraper_config, path_bronze_config]
+path_silver_config = Path().cwd() / "fipe/conf/silver.yml"
+paths_configs_files = [path_scraper_config, path_bronze_config, path_silver_config]
 
 
-def get_configs() -> Dict:
+def get_configs(tag: str):
     """Read all configuration files and return it as a dictionary
 
-    Args:
-        paths_configurations (List): Paths from the configuration files
 
     Returns:
-        Dict: _description_
+        Dict: Nested Dict on Configuration
     """
     configs_list = [__read_config(path) for path in paths_configs_files]
     configs_dict = {
         config.get("tag"): {k: v for k, v in config.items() if k != "tag"}
         for config in configs_list
     }
-    return configs_dict
+    return configs_dict[tag]
 
 
 def get_schema_from(
-    config: Dict, dataframe_name: str
+    config: dict, dataframe_name: str
 ) -> Union[StructType, StringType, IntegerType, DateType, ArrayType]:
     """
     In this function,we get the config file from the YML file.
@@ -96,9 +95,9 @@ def get_base_path(config: Dict) -> str:
 
 
 if __name__ == "__main__":
-    configs = get_configs()
-    mapping = configs["bronze"]["df_fipe_bronze_new_columns"]
-
-    print(mapping)
+    configs_bronze = get_configs("bronze")
+    configs_silver = get_configs("silver")
+    schema = get_schema_from(configs_bronze, dataframe_name="df_fipe_bronze")
+    print(schema)
     #  base_bronze_path = get_base_path(config_bronze)
     # schema = get_schema_from(config_bronze, "brands")

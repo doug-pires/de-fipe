@@ -1,6 +1,6 @@
 import pytest
 
-from fipe.elt.extract.extract import scrape_complete_tbody, scrape_options_brands
+from fipe.elt.extract import scrape_complete_tbody, scrape_options_brands
 
 
 def test_order_new_columns(config_new_columns_df_bronze):

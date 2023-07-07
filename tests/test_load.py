@@ -1,6 +1,6 @@
 import pytest
 
-from fipe.elt.load.load import join_path_table
+from fipe.elt.load import join_path_table
 
 
 def test_if_join_path_correctly():

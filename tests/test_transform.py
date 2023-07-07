@@ -2,11 +2,7 @@ import pytest
 from pyspark.sql.types import StringType, StructField, StructType
 
 import fipe.pipeline.read_configuration as cf
-from fipe.elt.transform.transform import (
-    change_all_column_names,
-    transform_df_to_list,
-    transform_to_df,
-)
+from fipe.elt.transform import transform_df_to_list, transform_to_df
 
 
 def test_if_transform_df_to_list(spark_session):
@@ -72,43 +68,6 @@ def test_transform_list_of_dicts_to_df(spark_session):
     ]
 
     assert df_bronze_fipe.columns == expected_columns
-
-
-def test_change_all_coluns_names_according_to_mapping(spark_session):
-    # Given this DataFrame
-    # Given the List Of Dicts and the SCHEMA for them
-    list_of_dicts = [
-        {
-            "Primeiro Nome": "Douglas",
-            "Segundo Nome": "Pires",
-            "Profissão": "Engenheiro de Dados",
-        },
-        {
-            "Primeiro Nome": "Maria Vitoria",
-            "Segundo Nome": "Alves",
-            "Profissão": "Dentista",
-        },
-    ]
-
-    schema = StructType(
-        [
-            StructField("Primeiro Nome", StringType(), nullable=False),
-            StructField("Segundo Nome", StringType(), nullable=False),
-            StructField("Profissão", StringType(), nullable=False),
-        ]
-    )
-
-    df_bronze_fipe = spark_session.createDataFrame(data=list_of_dicts, schema=schema)
-    mapping = {
-        "Primeiro Nome": "first_name",
-        "Segundo Nome": "surname",
-        "Profissão": "job",
-    }
-    # When I call the function to change the name of all COLUMNS to a MAPPING table
-    new_df = change_all_column_names(df=df_bronze_fipe, column_mapping=mapping)
-    expected_columns = ["first_name", "surname", "job"]
-
-    assert new_df.columns == expected_columns
 
 
 if __name__ == "__main__":

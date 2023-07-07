@@ -16,7 +16,7 @@ def get_stream_handler():
 
 
 # Create Logger and set its level
-def get_logger(logger_name):
+def get_logger(logger_name: str):
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.INFO)
     # Add the Handlers to Logger

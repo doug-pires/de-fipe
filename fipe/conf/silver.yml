@@ -1,0 +1,6 @@
+# Pertinent information about Silver layer
+---
+# Always add the Key tag, so that we can know which information this file will provide!
+tag: silver
+
+base_path: "/mnt/silver"
