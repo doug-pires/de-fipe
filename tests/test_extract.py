@@ -1,32 +1,70 @@
 import pytest
 
-from fipe.elt.extract import scrape_options_brands
+from fipe.elt.extract import (
+    scrape_complete_tbody,
+    scrape_options_brands,
+    scrape_options_models,
+    scrape_options_month_year,
+)
 
 
-def test_order_new_columns(config_new_columns_df_bronze):
-    # Given the configuration file imported, containing new columns
-    current_configurations_columns = config_new_columns_df_bronze
-    # When we compare with our expected order
-    expected_list = [
-        "reference_month",
-        "fipe_code",
-        "brand",
-        "model",
-        "manufacturing_year",
-        "authentication",
-        "query_date",
-        "average_price",
-    ]
+def test_if_extract_reference_month_and_return_as_list(driver_fixture):
+    # Given the DRIVER, we need to extract the MONTH-YEAR
+    driver = driver_fixture
 
-    # Then they should be at the same ORDER and be equals
-    assert current_configurations_columns == expected_list
-    assert sorted(current_configurations_columns) != expected_list
+    # When we call the function to extract ALL BRANDS
+    list_reference_months = scrape_options_month_year(driver)
+
+    # Then returns the result into a list and MUST MATCH the expected list
+    expected_reference_months = ["junho/2023", "maio/2022", "dezembro/2021"]
+
+    for month_year in expected_reference_months:
+        assert month_year in list_reference_months
 
 
-def test_if_the_scrape_table_returns_type_dict(table_fipe_fixture):
-    # # Given the PRE-CONDITIONS in a FIXTURE containing the fipe table as DICT
+def test_if_extract_brand_and_return_as_list(driver_fixture):
+    # Given the DRIVER, we need to extract the brands
+    driver = driver_fixture
 
-    extracted_dict = table_fipe_fixture
+    # When we call the function to extract ALL BRANDS
+    brand_list = scrape_options_brands(driver)
+
+    # Then returns the result into a list and MUST MATCH the expected list
+    expected_brands = ["Acura", "Nissan", "Alfa Romeo", "Ford", "Toyota"]
+
+    for brand in expected_brands:
+        assert brand in brand_list
+
+
+def test_if_extract_model_according_to_a_specific_brand_and_return_as_list(
+    driver_fixture,
+):
+    # Given the DRIVER, FILLED with the BRAND, Nissan, at least Sentra GLE, Frontier must be in the List
+    driver = driver_fixture
+
+    # When we call the function to extract ALL BRANDS
+    expected_models = scrape_options_models(driver)
+
+    # Then returns the result into a list and MUST MATCH the expected list
+    expected_models = ["Sentra GLE", "Altima SE 2.4 16V", "Infinit 3.0", "Micra 1.0"]
+
+    for models in expected_models:
+        assert models in expected_models
+
+
+def test_if_the_scrape_table_returns_type_dict(
+    driver_fixture, config_new_columns_df_bronze
+):
+    # Given the PRE-CONDITIONS in a FIXTURE containing the fipe table as DICT
+    new_columns_df_bronze = config_new_columns_df_bronze
+    table_fipe_as_dict = scrape_complete_tbody(driver_fixture, new_columns_df_bronze)
+
+    # Since it's DYNAMICALLY the field AUTEHNTICATION
+    # The Query Date will be hard to match, we will HARDCODE these values.
+
+    table_fipe_as_dict["authentication"] = "ABC"
+    table_fipe_as_dict["query_date"] = "quarta-feira, 28 de junho de 2023 18:34"
+
     expected_dict = {
         "reference_month": "junho de 2023",
         "fipe_code": "023037-5",
@@ -38,21 +76,8 @@ def test_if_the_scrape_table_returns_type_dict(table_fipe_fixture):
         "average_price": "R$ 8.939,00",
     }
 
-    assert extracted_dict == expected_dict
-    assert type(extracted_dict) == dict
-
-
-def test_if_extract_brands_and_return_as_list(driver_fixture_brands):
-    # Given the FAKE DRIVER with the PROPERTY page source
-    driver = driver_fixture_brands
-
-    # When we call the function to extract ALL BRANDS
-    brand_list = scrape_options_brands(driver)
-
-    # Then returns the result into a list and MUST MATCH the expected list
-    expected_brands = ["Brand 1", "Brand 2", "Brand 4"]
-
-    assert brand_list == expected_brands
+    assert table_fipe_as_dict == expected_dict
+    assert type(table_fipe_as_dict) == dict
 
 
 if __name__ == "__main__":

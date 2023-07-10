@@ -4,7 +4,27 @@ from pyspark.sql.types import DateType, IntegerType, StringType, StructField, St
 from fipe.scripts.get_config import get_schema_from
 
 
-def test_returns_correct_schema():
+def test_order_new_columns(config_new_columns_df_bronze):
+    # Given the configuration file imported, containing new columns
+    current_configurations_columns = config_new_columns_df_bronze
+    # When we compare with our expected order
+    expected_list = [
+        "reference_month",
+        "fipe_code",
+        "brand",
+        "model",
+        "manufacturing_year",
+        "authentication",
+        "query_date",
+        "average_price",
+    ]
+
+    # Then they should be at the same ORDER and be equals
+    assert current_configurations_columns == expected_list
+    assert sorted(current_configurations_columns) != expected_list
+
+
+def test_if_returns_correct_schema_from_configuration_file():
     # Given the Configuration in Dict
     config = {
         "dataframes": {

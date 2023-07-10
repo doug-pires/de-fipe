@@ -1,8 +1,8 @@
 import pytest
 from pyspark.sql.types import StringType, StructField, StructType
 
-import fipe.pipeline.read_configuration as cf
 from fipe.elt.transform import transform_df_to_list, transform_to_df
+from fipe.pipeline.read_configuration import schema_df_fipe_bronze
 
 
 def test_if_transform_df_to_list(spark_session):
@@ -29,42 +29,42 @@ def test_transform_list_of_dicts_to_df(spark_session):
     # Given the List Of Dicts and the SCHEMA for them
     list_of_dicts = [
         {
-            "Mês de referência": "março de 2004",
-            "Código Fipe": "038003-2",
-            "Marca": "Acura",
-            "Modelo": "Integra GS 1.8",
-            "Ano Modelo": "1992 Gasolina",
-            "Autenticação": "jw754kf5fb",
-            "Data da consulta": "quarta-feira, 28 de junho de 2023 18:51",
-            "Preço Médio": "R$ 17.393,00",
+            "reference_month": "março de 2004",
+            "fipe_code": "038003-2",
+            "brand": "Acura",
+            "model": "Integra GS 1.8",
+            "manufacturing_year": "1992 Gasolina",
+            "authentication": "jw754kf5fb",
+            "query_date": "quarta-feira, 28 de junho de 2023 18:51",
+            "average_price": "R$ 17.393,00",
         },
         {
-            "Mês de referência": "março de 2004",
+            "reference_month": "março de 2004",
             "Código Fipe": "038003-2",
-            "Marca": "Acura",
-            "Modelo": "Integra GS 1.8",
-            "Ano Modelo": "1991 Gasolina",
-            "Autenticação": "jcfl56cfjn",
-            "Data da consulta": "quarta-feira, 28 de junho de 2023 18:51",
-            "Preço Médio": "R$ 15.958,00",
+            "brand": "Acura",
+            "model": "Integra GS 1.8",
+            "manufacturing_year": "1991 Gasolina",
+            "authentication": "jcfl56cfjn",
+            "query_date": "quarta-feira, 28 de junho de 2023 18:51",
+            "average_price": "R$ 15.958,00",
         },
     ]
 
     # When call the function to transform to a DF
     df_bronze_fipe = transform_to_df(
-        spark_session, data=list_of_dicts, schema=cf.schema_df_fipe_bronze
+        spark_session, data=list_of_dicts, schema=schema_df_fipe_bronze
     )
 
     # Then returns me a DF with these columns and assert these columns in my expcted list
     expected_columns = [
-        "Mês de referência",
-        "Código Fipe",
-        "Marca",
-        "Modelo",
-        "Ano Modelo",
-        "Autenticação",
-        "Data da consulta",
-        "Preço Médio",
+        "reference_month",
+        "fipe_code",
+        "brand",
+        "model",
+        "manufacturing_year",
+        "authentication",
+        "query_date",
+        "average_price",
     ]
 
     assert df_bronze_fipe.columns == expected_columns

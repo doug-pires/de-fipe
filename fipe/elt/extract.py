@@ -7,6 +7,17 @@ logger = get_logger(__name__)
 
 
 def scrape_complete_tbody(driver, new_columns: list[str]) -> dict:
+    """
+    Extracts the HTML table within the tbody tags and returns the information as a dictionary.
+
+    Args:
+        driver (WebDriver): The WebDriver instance for controlling the browser.
+        new_columns (list[str]): New columns coming from the YML configuration file.
+
+    Returns:
+        dict: A dictionary containing the extracted information. The keys are the columns from `new_columns`
+              and the values are the corresponding values from the HTML table.
+    """
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -39,8 +50,13 @@ def scrape_complete_tbody(driver, new_columns: list[str]) -> dict:
 
 def scrape_options_month_year(driver) -> list[str]:
     """
-    This function extracts
-    All Month-Year available to iterate over it.
+    Extracts all available Reference Months from the HTML.
+
+    Args:
+        driver (WebDriver): The WebDriver instance for controlling the browser.
+
+    Returns:
+        list[str]: A list of strings representing the available Reference Months.
     """
 
     logger.info("Extracting all Reference Months available")
@@ -63,12 +79,18 @@ def scrape_options_month_year(driver) -> list[str]:
 
 def scrape_options_brands(driver) -> list[str]:
     """
-    This function extracts
-    All Brands available in the HTML to iterate over it.
-    Remove the empty STRINGS -> ""
+    Extracts all available brands from the HTML.
+
+    Args:
+        driver (WebDriver): The WebDriver instance for controlling the browser.
+
+    Returns:
+        list[str]: A list of strings representing the available brands.
     """
+
     logger.info("Extracting all Brands available")
     # I can pick the values AVAILABLE, or using Requests or BeautifulSoup
+
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
     # Brands Available
@@ -90,6 +112,16 @@ def scrape_options_brands(driver) -> list[str]:
 
 
 def scrape_options_models(driver) -> list[str]:
+    """
+    Extract all Models available for the current Brand
+    If Brand available is Nissan, then will get Sentra, Versa, Frontier and so on.
+    Args:
+        driver (WebDriver): The WebDriver instance for controlling the browser.
+
+    Returns:
+        list[str]: List of models.
+    """
+
     logger.info("Extracting all models available")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
@@ -104,8 +136,16 @@ def scrape_options_models(driver) -> list[str]:
     return all_models
 
 
-# brand: str, model: str,
 def scrape_manufacturing_year_fuel(driver) -> list[str]:
+    """
+    Extracts the available MANUFACTURING YEAR - FUEL options.
+
+    Args:
+        driver (WebDriver): The WebDriver instance for controlling the browser.
+
+    Returns:
+        list[str]: A list of strings representing the available MANUFACTURING YEAR - FUEL options.
+    """
     logger.info("Extracting all MANUFACTURING YEAR - FUEL available")
     # Get the new URL
     soup = BeautifulSoup(driver.page_source, "html.parser")
