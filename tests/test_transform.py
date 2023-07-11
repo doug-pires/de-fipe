@@ -40,7 +40,7 @@ def test_transform_list_of_dicts_to_df(spark_session):
         },
         {
             "reference_month": "março de 2004",
-            "Código Fipe": "038003-2",
+            "fipe_code": "038003-2",
             "brand": "Acura",
             "model": "Integra GS 1.8",
             "manufacturing_year": "1991 Gasolina",
@@ -57,7 +57,7 @@ def test_transform_list_of_dicts_to_df(spark_session):
 
     # Then returns me a DF with these columns and assert these columns in my expcted list
     expected_columns = [
-        "reference_month",
+        "reference_month_2",
         "fipe_code",
         "brand",
         "model",
@@ -71,4 +71,4 @@ def test_transform_list_of_dicts_to_df(spark_session):
 
 
 if __name__ == "__main__":
-    pytest.main(["-v", "--setup-show", "-k", "transform"])
+    pytest.main(["-v", "--setup-show", "-s", "-k", "test_df"])
