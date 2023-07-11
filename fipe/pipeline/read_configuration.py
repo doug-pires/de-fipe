@@ -11,6 +11,7 @@ xpath_bt_manufacturing_year_fuel = __webscraper_config["xpaths"][
     "xpath_bt_manufacturing_year_fuel"
 ]
 xpath_bt_search = __webscraper_config["xpaths"]["xpath_bt_search"]
+xpath_bt_clean_search = __webscraper_config["xpaths"]["xpath_bt_clean_search"]
 
 
 # Get Bronze Config

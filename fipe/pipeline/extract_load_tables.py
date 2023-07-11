@@ -17,6 +17,7 @@ from fipe.pipeline.read_configuration import (
     schema_df_fipe_bronze,
     url,
     xpath_bt_brand,
+    xpath_bt_clean_search,
     xpath_bt_manufacturing_year_fuel,
     xpath_bt_model,
     xpath_bt_month_year,
@@ -69,8 +70,8 @@ def main():
         # For Each Reference Month extract all Brands Available
         ################
         list_brands = scrape_options_brands(site_fipe)
-        logger.info(f"Brands available: {list_brands[:3]} for {month_year}")
-        for brand in list_brands:
+        logger.info(f"Brands available: {list_brands[:8]} for {month_year}")
+        for brand in ["BMW"]:
             time.sleep(0.5)
             bt_brand = locate_bt(site_fipe, xpath_bt_brand)
             add_on(bt_brand, brand)
@@ -82,10 +83,14 @@ def main():
             for model in list_models:
                 bt_model = locate_bt(driver=site_fipe, xpath=xpath_bt_model)
                 click(bt_model)
+                time.sleep(3)
                 add_on(bt_model, model)
                 # For Each Model extract all Manufacturing Year - Fuel Available
                 ################
                 list_manufacturing_year_fuel = scrape_manufacturing_year_fuel(site_fipe)
+                logger.info(
+                    f"Manufacturing Year available: {list_manufacturing_year_fuel[:8]} for {month_year} and brand {brand}, model: {model}"
+                )
                 for manufacturing_year in list_manufacturing_year_fuel:
                     time.sleep(1)
                     bt_manufacturing_year = locate_bt(
@@ -103,6 +108,13 @@ def main():
                     data = scrape_complete_tbody(site_fipe, new_columns_df_bronze)
 
                     list_of_dicts.append(data)
+                print("Finished Year Fuel, picking another Model")
+
+                time.sleep(3)
+
+                # Clean Search
+                bt_clean = locate_bt(site_fipe, xpath_bt_clean_search)
+                click(bt_clean)
             df = transform_to_df(spark, list_of_dicts, schema_df_fipe_bronze)
             print("Brand: ", brand)
             save_delta_table_partitioned(

@@ -12,3 +12,4 @@ xpaths:
   xpath_bt_model : //*[@id="selectAnoModelocarro"]
   xpath_bt_manufacturing_year_fuel : //*[@id="selectAnocarro"]
   xpath_bt_search : //a[@id="buttonPesquisarcarro"]
+  xpath_bt_clean_search: //div[@id="buttonLimparPesquisarcarro"]//a
