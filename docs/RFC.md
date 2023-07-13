@@ -160,3 +160,5 @@ The final result on `Bronze Layer` will be a Delta Table partitioned by *referen
 # Appendix
 
 ## Alternatives
+There are tons of alternatives or stack we could apply instead Pyspark, Databricks.
+One I would like to highlight is docker, polars, deltalake [delta-rs](https://github.com/delta-io/delta-rs) and [dagster](https://dagster.io/) to orchestrate our jobs as Data Assets.

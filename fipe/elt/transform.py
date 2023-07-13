@@ -1,6 +1,5 @@
 # This file hold TRANSFORMATION functions
 
-from typing import Dict, List
 
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
@@ -13,7 +12,7 @@ logger = get_logger(__name__)
 
 
 def transform_list_to_df(
-    spark: SparkSession, data: List[str], schema: StructType = None
+    spark: SparkSession, data: list[str], schema: StructType = None
 ) -> DataFrame:
     # Create a list of rows with the specified schema
     rows = [(value,) for value in data]
@@ -22,7 +21,7 @@ def transform_list_to_df(
 
 
 def transform_to_df(
-    spark: SparkSession, data: List[Dict], schema: StructType = None
+    spark: SparkSession, data: list[dict[str, str]], schema: StructType = None
 ) -> DataFrame:
     df = spark.createDataFrame(data, schema)
     return df

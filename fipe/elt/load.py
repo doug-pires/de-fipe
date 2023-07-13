@@ -37,9 +37,12 @@ def save_delta_table_partitioned(
     delta_table_name: str,
     partition_by: list[str],
     mode="overwrite",
+    encoding: str = "utf-8",
 ):
     path_table = join_path_table(path, delta_table_name)
-    df.write.format("delta").mode(mode).partitionBy(*partition_by).save(path_table)
+    df.write.format("delta").mode(mode).option("enconding", encoding).partitionBy(
+        *partition_by
+    ).save(path_table)
     return logger.info(f"Saved as Delta table partitioned by {partition_by}")
 
 
