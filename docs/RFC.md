@@ -24,7 +24,7 @@ Over time my vehicle suffers depreciation or appreciation ( hard to happen ).
 - **Main Audience**: Other interested engineers and I.
 
 # Requirements
-1. Run the pipeline once a month.
+1. Run the pipeline once a month and update the Delta Table with the current month
 2. Use [Delta Lake](https://delta.io/) as Storage framework.
 3. Use Functional Programming & OOP for some cases.
 4. [pytest](https://docs.pytest.org/en/7.3.x/) as test framework
@@ -33,11 +33,18 @@ Over time my vehicle suffers depreciation or appreciation ( hard to happen ).
 
 ## Datasources
 - Website [FIPE](https://veiculos.fipe.org.br/)
-- Volume of the data is not so big.
-## Data Ingestion
-Functions for extraction will be on `fipe/elt/extract/utils.py`
+### Challenges
+- The website has instability and strict validations on dropdown boxes.
+- Website after long-running crashes due to requests take time to back with the answer.
 
-We will create scraper/extraction functions to extract the *reference months*, and the complete table containing information about the vehicles.
+## Data Ingestion
+- We will create scraper/extraction functions to extract the *reference months*, and the complete table containing information about the vehicles.
+- Functions for extraction will be on `fipe/elt/extract/utils.py`
+
+### Challenges
+- The volume of data we can consider medium because they have data since January/2001 more than 20 years. In an ordinary data source, database, or API  we would do that in batches ( quantity of rows, size, a batch of years ) but it's a robot, we need to loop through them one by one.
+- The scraper will cycle through the drop-down boxes, fill and extract all information, however, we need to develop something **Self-Healing** and with **Checkpoints**. Let's imagine, one extraction takes more time and crashes the application, we need to be able to rerun and return where we let it off.
+
 
 ## Data Storage
 Functions for loading the tables will be on `fipe/elt/load/utils.py`
@@ -61,6 +68,8 @@ We will use Import Mode on Power BI Desktop to create the report.
 ## Costs
 For being a small workload we are going to use **Single Node**  cluster `Standard_DS3_v2` with 4vCores
 
+###
+
 ## Operational
 Log almost everything important for us. Especially Browser, Buttons the automation in general.
 
@@ -75,7 +84,7 @@ Follow two **IMPORTANT PRINCIPLES** while we develop our pipeline:
 1. Set the local environment
  - [Poetry](https://python-poetry.org/) to manage our metadata project
  - Config Github
-2. Install libraries we are going to use.
+2. Install libraries we are going to use ( check `pyproject.toml` to verify all of them )
  - pyspark
  - delta-spark
  - pytest
@@ -117,7 +126,7 @@ There is a function to extract the HTML table over the tag `<tbody> Table </tbod
 When ALL *brands*, *models* and *manufacturing year - fuel* are done for a SPECIFIC *reference month* , will be generated a `List[Dict]`, transform it to a PySpark DataFrame and save it on our `mnt/bronze`.
 
 >The workflow stated above will run until all data be scraped.
-The final result on `Bronze Layer` will be a Delta Table partitioned by *reference months* and *brands*.
+The final result on `Bronze Layer` will be a Delta Table partitioned by *reference months* , *brands* and *model*.
 
 ## Workflow
 - Task 1:
@@ -130,8 +139,9 @@ The final result on `Bronze Layer` will be a Delta Table partitioned by *referen
 - Task 3:
    1. Open Browser
    2. Read *reference months* and iterate over them to extract *brands*,*models*, *manufacturing year - fuel*
-   3. After finishing one *reference month* we will save as Delta Table partitioned by *reference month*
-   4. Repeat the Cycle
+   3. After finishing one *brand* we will save as Delta Table
+   4. Create **Checkpoint**
+   5. Repeat the Cycle
 - Task 4:
   1. Read the tables on `Bronze` apply data cleansing, validation, add new columns and save it as Delta Table into `Silver Layer`
 - Task 5:
@@ -148,6 +158,10 @@ The final result on `Bronze Layer` will be a Delta Table partitioned by *referen
   - authentication string
   - query_date string
   - average_price string
+
+Checkpoint:
+- One Instance `json_file: { "reference_month": "april/2021", "brand": "Nissan", "model": "Sentra GLE" }`
+
 > We are changing the name of the columns, because in portuguese, we have spaces, punctuation, then Delta Lake does not allow carry on saving the table.
 
 `Silver Layer` basically the same Delta Table however with more columns.

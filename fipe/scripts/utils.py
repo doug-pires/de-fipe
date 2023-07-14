@@ -15,6 +15,44 @@ from fipe.scripts.loggers import get_logger
 logger = get_logger(__name__)
 
 
+def retry_search(max_attempts, delay=2):
+    """
+    A decorator function that retries the execution of a given function in case of exceptions.
+
+    Args:
+        max_attempts (int): The maximum number of attempts to execute the function.
+        delay (int, optional): The delay (in seconds) between each retry attempt. Defaults to 2.
+
+    Returns:
+        function: A wrapper function that performs the retry logic.
+
+    Example usage:
+        @retry_search(max_attempts=3, delay=5)
+        def search(query):
+            # Function implementation
+
+    """
+
+    def decorator(original_function):
+        def wrapper(*args, **kwargs):
+            attempts = 0
+            while attempts < max_attempts:
+                try:
+                    return original_function(*args, **kwargs)
+                except Exception:
+                    attempts += 1
+                    logger.error(f"Attempt {attempts} failed to connect")
+                    time.sleep(delay)
+            logger.critical(
+                f"Data extraction stopped, because Function {original_function.__name__} failed after {max_attempts} attempts"
+            )
+
+        return wrapper
+
+    return decorator
+
+
+@retry_search(max_attempts=3, delay=3)
 def open_chrome(url: str, headless: bool = True):
     """Open Google Chrome browser and navigate to the specified URL.
 
@@ -45,7 +83,8 @@ def open_chrome(url: str, headless: bool = True):
         return driver
     except Exception:
         logger.error("This site can't be reached")
-        return close_browser(driver)
+        close_browser(driver)
+        raise Exception
 
 
 def close_browser(driver: WebDriver):
@@ -60,7 +99,6 @@ def close_browser(driver: WebDriver):
     return driver.close()
 
 
-# General Functions
 def locate_bt(driver: WebDriver, xpath: str) -> WebElement:
     """Locate a button element on the page using XPath.
 
@@ -107,6 +145,7 @@ def click_with_driver(driver: WebDriver, bt_or_box: str):
     return driver.execute_script(js_code, bt_or_box)
 
 
+@retry_search(max_attempts=3, delay=2)
 def click(bt_or_box):
     """Click on a WebElement.
 
@@ -134,4 +173,4 @@ def add_on(bt_or_box, info: str):
 
 
 if __name__ == "__main__":
-    open_chrome("https://www.youtube.com/")
+    open_chrome("https://www..com/", False)

@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from fipe.elt.extract import (
@@ -6,6 +8,7 @@ from fipe.elt.extract import (
     scrape_options_models,
     scrape_options_month_year,
 )
+from fipe.scripts.utils import retry_search
 
 
 def test_if_extract_reference_month_and_return_as_list(driver_fixture):
@@ -80,5 +83,29 @@ def test_if_the_scrape_table_returns_type_dict(
     assert type(table_fipe_as_dict) == dict
 
 
+def test_retry_search_logs(caplog):
+    # Set up logging
+    caplog.set_level(logging.ERROR)  # Set the log level to capture critical messages
+
+    # Create a dummy function that always raises an exception DECORATED by retry
+    @retry_search(max_attempts=2, delay=1)
+    def dummy_function():
+        raise ValueError("Something went wrong")
+
+    # Call the decorated function
+    dummy_function()
+    # Assert that the expected log messages were generated
+    expected_logs = [
+        "Attempt 1 failed to connect",
+        "Attempt 2 failed to connect",
+        "Data extraction stopped, because Function dummy_function failed after 2 attempts",
+    ]
+
+    log_messages = [msg.message for msg in caplog.records]
+
+    for expected_log in expected_logs:
+        assert expected_log in log_messages
+
+
 if __name__ == "__main__":
-    pytest.main(["-v", "--setup-show", "-k", "extract"])
+    pytest.main(["-v", "-s", "--setup-show", "-k", "test_retry_search_logs"])

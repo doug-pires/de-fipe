@@ -9,8 +9,9 @@ from fipe.elt.extract import (
     scrape_manufacturing_year_fuel,
     scrape_options_brands,
     scrape_options_models,
+    scrape_options_month_year,
 )
-from fipe.elt.load import read_delta_table, save_delta_table_partitioned
+from fipe.elt.load import read_checkpoint, read_delta_table, save_delta_table
 from fipe.elt.transform import transform_df_to_list, transform_to_df
 from fipe.pipeline.read_configuration import (
     new_columns_df_bronze,
@@ -44,8 +45,6 @@ def main():
     spark_manager = SparkSessionManager(app_name=__name__)
     spark = spark_manager.get_spark_session()
 
-    df_month_year_as_delta = read_delta_table(spark, path_dev, "reference_month")
-    list_reference_month_year = transform_df_to_list(df_month_year_as_delta)
     site_fipe = open_chrome(url, False)
     scroll_to_element(site_fipe, xpath_search_car)
     bt = locate_bt(site_fipe, xpath_search_car)
@@ -53,8 +52,10 @@ def main():
 
     # Start Workflow
     ################
+
+    list_reference_months = scrape_options_month_year(site_fipe)
     start_time = time.time()
-    for month_year in list_reference_month_year[:2]:
+    for month_year in list_reference_months[:2]:
         time.sleep(0.5)
         bt_month_year = locate_bt(
             driver=site_fipe,
@@ -70,7 +71,7 @@ def main():
         ################
         list_brands = scrape_options_brands(site_fipe)
 
-        for brand in list_brands:
+        for brand in list_brands[:3]:
             time.sleep(0.5)
             bt_brand = locate_bt(site_fipe, xpath_bt_brand)
             add_on(bt_brand, brand)
@@ -79,7 +80,7 @@ def main():
             ################
             list_models = scrape_options_models(site_fipe)
 
-            for model in list_models:
+            for model in list_models[:4]:
                 scroll_to_element(driver=site_fipe, xpath=xpath_bt_model)
                 bt_model = locate_bt(driver=site_fipe, xpath=xpath_bt_model)
                 click(bt_model)
@@ -98,11 +99,10 @@ def main():
                     click(bt_manufacturing_year)
                     add_on(bt_manufacturing_year, manufacturing_year)
 
-                    # Press Search
-                    # Sometimes this will be searching for the Table, then we will try to skip if fails
                     bt_search = locate_bt(site_fipe, xpath_bt_search)
+                    # Press Search
+                    # We decorated that function to RETRY whenever we can not access the table
                     click(bt_search)
-                    time.sleep(0.5)
 
                     # Extract All Table
                     data = scrape_complete_tbody(site_fipe, new_columns_df_bronze)
@@ -115,20 +115,19 @@ def main():
                 # That's why I decided clean the table and add the BRAND again.
                 bt_clean = locate_bt(site_fipe, xpath_bt_clean_search)
                 click(bt_clean)
-                time.sleep(0.5)
 
                 # After Clean, lWe will add again the Brand.
                 click(bt_brand)
                 add_on(bt_brand, brand)
 
-        df = transform_to_df(spark, list_of_dicts, schema_df_fipe_bronze)
-        save_delta_table_partitioned(
-            df=df,
-            path=path_dev,
-            mode="append",
-            delta_table_name="fipe_bronze",
-            partition_by=["reference_month", "brand", "model"],
-        )
+            df = transform_to_df(spark, list_of_dicts, schema_df_fipe_bronze)
+            save_delta_table(
+                df=df,
+                path=path_dev,
+                mode="append",
+                delta_table_name="fipe_bronze",
+                partition_by=["reference_month"],
+            )
 
     list_of_dicts.clear()
 

@@ -1,5 +1,5 @@
 import pytest
-from pyspark.sql.types import StringType, StructField, StructType
+from pyspark.sql.types import IntegerType, StringType, StructField, StructType
 
 from fipe.elt.transform import transform_df_to_list, transform_to_df
 from fipe.pipeline.read_configuration import schema_df_fipe_bronze
@@ -9,20 +9,28 @@ def test_if_transform_df_to_list(spark_session):
     # Given the SCHEMA and the DATA to create the Dataframe Brands
     schema = StructType(
         [
-            StructField("brand", StringType(), nullable=False),
+            StructField("name", StringType(), nullable=False),
+            StructField("age", IntegerType(), nullable=False),
         ]
     )
 
-    data = [("Toyota",), ("Ford",), ("Chevrolet",)]
-    df_brands = spark_session.createDataFrame(data=data, schema=schema)
+    data = [
+        ("Douglas", 31),
+        (
+            "Tifa",
+            25,
+        ),
+        ("Marc", 75),
+    ]
+    df_demo = spark_session.createDataFrame(data=data, schema=schema)
 
-    # When we call the function to extract ALL BRANDS
-    brand_list = transform_df_to_list(df_brands)
+    # When we call the function to transform this DF to list
+    person_List = transform_df_to_list(df_demo)
 
     # Then returns the result into a list and MUST MATCH the expected list
-    expected_brands = ["Toyota", "Ford", "Chevrolet"]
+    expected_list = [["Douglas", 31], ["Tifa", 25], ["Marc", 75]]
 
-    assert brand_list == expected_brands
+    assert person_List == expected_list
 
 
 def test_transform_list_of_dicts_to_df(spark_session):
@@ -57,7 +65,7 @@ def test_transform_list_of_dicts_to_df(spark_session):
 
     # Then returns me a DF with these columns and assert these columns in my expcted list
     expected_columns = [
-        "reference_month_2",
+        "reference_month",
         "fipe_code",
         "brand",
         "model",

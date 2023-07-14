@@ -1,11 +1,12 @@
 # This file hold TRANSFORMATION functions
 
 
+from typing import Any
+
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import StructType
 
-from fipe.scripts.get_spark import SparkSessionManager
 from fipe.scripts.loggers import get_logger
 
 logger = get_logger(__name__)
@@ -27,13 +28,30 @@ def transform_to_df(
     return df
 
 
-def transform_df_to_list(df: DataFrame):
+def transform_df_to_list(df: DataFrame) -> list[str] | list[list[str, str]]:
+    """
+    Transforms a DataFrame into a nested list representation.
+
+    Args:
+        df (DataFrame): The DataFrame to be transformed.
+
+    Returns:
+        list[str] | list[list[str, str]]: The transformed DataFrame represented as a nested list.
+            - If the DataFrame has a single column, a flat list of column values is returned.
+            - If the DataFrame has multiple columns, a nested list of row values, where each row
+              is represented as a list of column values, is returned.
+
+    Example:
+        >>> df = DataFrame([("John", 25), ("Alice", 30)], columns=["Name", "Age"])
+        >>> transform_df_to_list(df)
+        [['John', '25'], ['Alice', '30']]
+    """
     # Collect DataFrame rows as a list
     rows_list = df.collect()
     # Convert Row objects to a nested list
-    brand_list = [row[0] for row in rows_list]
+    col_list = [list(row) for row in rows_list]
     logger.info("Transforming Dataframe to list")
-    return brand_list
+    return col_list
 
 
 def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
@@ -41,32 +59,25 @@ def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
     return df_new_column
 
 
+def get_flag_checkpoint(
+    current_reference_month: str,
+    current_model: str,
+    checkpoint_list: list[list[str, str]],
+) -> bool:
+    """The function will help VALIDATE if we already extracted this MODEL in a SPECIFIC REFERENCE MONTH
+
+    Args:
+        current_reference_month (str): The CURRENT REFERENCE MONTH in the LOOP
+        current_model (str): The CURRENT MODEL in the LOOP
+        checkpoint_list (list[list[str, str]]): The list of REFERENCE MONTH and MODEL I have already extracted.
+        Considered REFERENCE MONTH and MODEL, because I need to consider BOTH.
+    Returns:
+        bool: A FLAG basically saying "ALREADY extracted" go to another MODEL.
+    """
+    current_list = [current_reference_month.replace("/", " de "), current_model]
+    check = current_list in checkpoint_list
+    return check
+
+
 if __name__ == "__main__":
-    import fipe.pipeline.read_configuration as cf
-
-    data = [
-        {
-            "Mês de referência": "março de 2004",
-            "Código Fipe": "038003-2",
-            "Marca": "Acura",
-            "Modelo": "Integra GS 1.8",
-            "Ano Modelo": "1992 Gasolina",
-            "Autenticação": "jw754kf5fb",
-            "Data da consulta": "quarta-feira, 28 de junho de 2023 18:51",
-            "Preço Médio": "R$ 17.393,00",
-        },
-        {
-            "Mês de referência": "março de 2004",
-            "Código Fipe": "038003-2",
-            "Marca": "Acura",
-            "Modelo": "Integra GS 1.8",
-            "Ano Modelo": "1991 Gasolina",
-            "Autenticação": "jcfl56cfjn",
-            "Data da consulta": "quarta-feira, 28 de junho de 2023 18:51",
-            "Preço Médio": "R$ 15.958,00",
-        },
-    ]
-    spark = SparkSessionManager(__name__).get_spark_session()
-    df = spark.createDataFrame(data=data, schema=cf.schema_df_fipe_bronze)
-
-    df.show()
+    ...

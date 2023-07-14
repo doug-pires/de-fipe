@@ -16,5 +16,9 @@ def test_if_join_path_correctly():
     assert current_path == expected_path
 
 
+def test_if_will_return_only_models_not_extracted():
+    ...
+
+
 if __name__ == "__main__":
     pytest.main(["-v", "--setup-show", "-k", "load"])
