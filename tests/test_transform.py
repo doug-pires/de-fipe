@@ -1,11 +1,15 @@
 import pytest
 from pyspark.sql.types import IntegerType, StringType, StructField, StructType
 
-from fipe.elt.transform import transform_df_to_list, transform_to_df
+from fipe.elt.transform import (
+    get_flag_checkpoint,
+    transform_df_to_list,
+    transform_to_df,
+)
 from fipe.pipeline.read_configuration import schema_df_fipe_bronze
 
 
-def test_if_transform_df_to_list(spark_session):
+def test_transform_df_to_list(spark_session):
     # Given the SCHEMA and the DATA to create the Dataframe Brands
     schema = StructType(
         [
@@ -76,6 +80,44 @@ def test_transform_list_of_dicts_to_df(spark_session):
     ]
 
     assert df_bronze_fipe.columns == expected_columns
+
+
+def test_flag_checkpoint_returns_true():
+    # Given my REFERENCE MONTH and MODEL previously EXTRACTED and the CURRENT reference month and MODEL
+    list_saved_in_my_storage = [
+        ["junho de 2023", "Model X"],
+        ["setembro de 2035", "Model Z"],
+    ]
+    reference_month = "junho/2023"
+    model = "Model X"
+    # When I call the function to validate the CHECKPOINT and pass the TWO list
+    flag_is_extracted = get_flag_checkpoint(
+        current_reference_month=reference_month,
+        current_model=model,
+        checkpoint_list=list_saved_in_my_storage,
+    )
+
+    # Then ASSERT the flag will return TRUE
+    assert flag_is_extracted is True
+
+
+def test_flag_checkpoint_returns_false():
+    # Given my REFERENCE MONTH and MODEL previously EXTRACTED and the CURRENT reference month and MODEL
+    list_saved_in_my_storage = [
+        ["junho de 2023", "Model X"],
+        ["setembro de 2035", "Model Z"],
+    ]
+    reference_month = "dezembro/2023"
+    model = "Model T"
+    # When I call the function to validate the CHECKPOINT and pass the TWO list
+    flag_is_extracted = get_flag_checkpoint(
+        current_reference_month=reference_month,
+        current_model=model,
+        checkpoint_list=list_saved_in_my_storage,
+    )
+
+    # Then ASSERT the flag will return TRUE
+    assert flag_is_extracted is False
 
 
 if __name__ == "__main__":

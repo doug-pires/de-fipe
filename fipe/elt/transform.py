@@ -1,8 +1,6 @@
 # This file hold TRANSFORMATION functions
 
 
-from typing import Any
-
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import StructType

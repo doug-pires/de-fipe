@@ -51,29 +51,5 @@ def read_delta_table(
     return df
 
 
-def read_checkpoint(
-    models_already_extracted: list[str], models_newly_extracted: list[str]
-) -> list[str]:
-    """
-    Get the list of model checkpoints that need to be searched.
-
-    Args:
-        models_already_extracted (list[str]): List of models already extracted.
-        models_new_extracted (list[str]): List of models newly extracted.
-
-    Returns:
-        list[str]: List of model checkpoints to search.
-
-    Examples:
-        >>> models_already_extracted = ["A", "B", "C", "D"]
-        >>> models_new_extracted = ["B", "D", "E"]
-        >>> get_model_checkpoint(models_already_extracted, models_new_extracted)
-        ['C', 'A']
-
-    """
-    models_to_search = list(set(models_already_extracted) - set(models_newly_extracted))
-    return models_to_search
-
-
 if __name__ == "__main__":
     ...
