@@ -57,7 +57,7 @@ def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
     return df_new_column
 
 
-def get_flag_checkpoint(
+def flag_is_in_checkpoint(
     current_reference_month: str,
     current_model: str,
     checkpoint_list: list[list[str, str]],

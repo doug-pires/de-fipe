@@ -1,6 +1,8 @@
 # This file hold SINK functions
 
 
+from pathlib import Path
+
 from pyspark.sql import DataFrame, SparkSession
 
 from fipe.scripts.loggers import get_logger
@@ -34,6 +36,7 @@ def save_delta_table(
     encoding: str = "utf-8",
 ):
     path_table = join_path_table(path, delta_table_name)
+
     df.write.format("delta").mode(mode).option("enconding", encoding).partitionBy(
         *partition_by
     ).save(path_table)
@@ -47,9 +50,15 @@ def read_delta_table(
     spark: SparkSession, path: str, delta_table_name: str
 ) -> DataFrame:
     path_table = join_path_table(path, delta_table_name)
-    df = spark.read.format("delta").load(path_table)
-    return df
+    check_path = Path(path_table)
+    if check_path.exists():
+        df = spark.read.format("delta").load(path_table)
+        return df
+    else:
+        logger.error(f"The path provided does not exist: {path_table}")
+        raise FileNotFoundError
 
 
 if __name__ == "__main__":
-    ...
+    path = Path("/mnt/c/Users/dpire/Desktop/fipe_bronze")
+    print(path.exists())

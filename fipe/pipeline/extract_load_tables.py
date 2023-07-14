@@ -11,8 +11,12 @@ from fipe.elt.extract import (
     scrape_options_models,
     scrape_options_month_year,
 )
-from fipe.elt.load import read_checkpoint, read_delta_table, save_delta_table
-from fipe.elt.transform import transform_df_to_list, transform_to_df
+from fipe.elt.load import read_delta_table, save_delta_table
+from fipe.elt.transform import (
+    flag_is_in_checkpoint,
+    transform_df_to_list,
+    transform_to_df,
+)
 from fipe.pipeline.read_configuration import (
     new_columns_df_bronze,
     schema_df_fipe_bronze,
@@ -45,6 +49,11 @@ def main():
     spark_manager = SparkSessionManager(app_name=__name__)
     spark = spark_manager.get_spark_session()
 
+    # Read Checkpoint
+    df_fipe = read_delta_table(spark, path_dev, "fipe_bronze")
+    df_checkpoint = df_fipe.select("reference_month", "model")
+    list_checkpoints = transform_df_to_list(df_checkpoint)
+
     site_fipe = open_chrome(url, False)
     scroll_to_element(site_fipe, xpath_search_car)
     bt = locate_bt(site_fipe, xpath_search_car)
@@ -62,11 +71,10 @@ def main():
             xpath=xpath_bt_month_year,
         )
         click(bt_month_year)
-
-        # Define List will keep the dictionaries of Data
-        list_of_dicts = []
         add_on(bt_or_box=bt_month_year, info=month_year)
 
+        # It will hold my fipe table
+        list_fipe_information: list = []
         # For Each Reference Month extract all Brands Available
         ################
         list_brands = scrape_options_brands(site_fipe)
@@ -81,6 +89,19 @@ def main():
             list_models = scrape_options_models(site_fipe)
 
             for model in list_models[:4]:
+                is_downloaded = flag_is_in_checkpoint(
+                    current_reference_month=month_year,
+                    current_model=model,
+                    checkpoint_list=list_checkpoints,
+                )
+                print(
+                    f"Was downloaded info for reference month {month_year} and the model {model} yet? {is_downloaded}"
+                )
+                time.sleep(3)
+                if is_downloaded:
+                    print("Downloaded yet... Leaving!")
+                    break
+
                 scroll_to_element(driver=site_fipe, xpath=xpath_bt_model)
                 bt_model = locate_bt(driver=site_fipe, xpath=xpath_bt_model)
                 click(bt_model)
@@ -92,6 +113,7 @@ def main():
                 logger.info(
                     f"Manufacturing Year available: {list_manufacturing_year_fuel} for {month_year} and brand {brand}, model: {model}"
                 )
+
                 for manufacturing_year in list_manufacturing_year_fuel:
                     bt_manufacturing_year = locate_bt(
                         site_fipe, xpath_bt_manufacturing_year_fuel
@@ -107,7 +129,7 @@ def main():
                     # Extract All Table
                     data = scrape_complete_tbody(site_fipe, new_columns_df_bronze)
 
-                    list_of_dicts.append(data)
+                    list_fipe_information.append(data)
 
                 # Clean Search
                 # We are cleaning because some model are not available for the SPECIFIC Manufacturing Year - Fuel left by the last process.
@@ -120,16 +142,16 @@ def main():
                 click(bt_brand)
                 add_on(bt_brand, brand)
 
-            df = transform_to_df(spark, list_of_dicts, schema_df_fipe_bronze)
-            save_delta_table(
-                df=df,
-                path=path_dev,
-                mode="append",
-                delta_table_name="fipe_bronze",
-                partition_by=["reference_month"],
-            )
+        df = transform_to_df(spark, list_fipe_information, schema_df_fipe_bronze)
+        save_delta_table(
+            df=df,
+            path=path_dev,
+            mode="append",
+            delta_table_name="fipe_bronze",
+            partition_by=["reference_month"],
+        )
 
-    list_of_dicts.clear()
+    list_fipe_information.clear()
 
     close_browser(site_fipe)
     end_time = time.time()

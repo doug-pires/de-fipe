@@ -2,7 +2,7 @@ import pytest
 from pyspark.sql.types import IntegerType, StringType, StructField, StructType
 
 from fipe.elt.transform import (
-    get_flag_checkpoint,
+    flag_is_in_checkpoint,
     transform_df_to_list,
     transform_to_df,
 )
@@ -91,7 +91,7 @@ def test_flag_checkpoint_returns_true():
     reference_month = "junho/2023"
     model = "Model X"
     # When I call the function to validate the CHECKPOINT and pass the TWO list
-    flag_is_extracted = get_flag_checkpoint(
+    flag_is_extracted = flag_is_in_checkpoint(
         current_reference_month=reference_month,
         current_model=model,
         checkpoint_list=list_saved_in_my_storage,
@@ -110,7 +110,7 @@ def test_flag_checkpoint_returns_false():
     reference_month = "dezembro/2023"
     model = "Model T"
     # When I call the function to validate the CHECKPOINT and pass the TWO list
-    flag_is_extracted = get_flag_checkpoint(
+    flag_is_extracted = flag_is_in_checkpoint(
         current_reference_month=reference_month,
         current_model=model,
         checkpoint_list=list_saved_in_my_storage,

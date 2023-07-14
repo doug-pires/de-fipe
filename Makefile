@@ -5,7 +5,7 @@ test_extract:
 	poetry run pytest tests/test_extract.py -v --setup-show -s
 
 test_load:
-	poetry run pytest tests/test_transform.py -v --setup-show -s
+	poetry run pytest tests/test_load.py -v --setup-show -s
 
 test_transform:
 	poetry run pytest tests/test_transform.py -v --setup-show -s

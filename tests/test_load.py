@@ -1,6 +1,6 @@
 import pytest
 
-from fipe.elt.load import join_path_table
+from fipe.elt.load import join_path_table, read_delta_table
 
 
 def test_if_join_path_correctly():
@@ -16,8 +16,16 @@ def test_if_join_path_correctly():
     assert current_path == expected_path
 
 
-def test_if_will_return_only_models_not_extracted():
-    ...
+def test_read_table_with_incorrect_path(spark_session):
+    # Given the WRONG PATH
+    dummy_path = "/mnt/bronze/any/path"
+    # When we TRY to save the Delta Table we EXPECT raise an EXCEPTION because the PATH is WRONG
+
+    # Then
+    with pytest.raises(FileNotFoundError):
+        read_delta_table(
+            spark=spark_session, path=dummy_path, delta_table_name="delta_table_name"
+        )
 
 
 if __name__ == "__main__":
