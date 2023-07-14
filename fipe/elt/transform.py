@@ -1,10 +1,13 @@
 # This file hold TRANSFORMATION functions
 
 
+from pathlib import Path
+
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import StructType
 
+from fipe.elt.load import join_path_table
 from fipe.scripts.loggers import get_logger
 
 logger = get_logger(__name__)
@@ -52,6 +55,22 @@ def transform_df_to_list(df: DataFrame) -> list[str] | list[list[str, str]]:
     return col_list
 
 
+def transform_checkpoint_to_list(
+    spark: SparkSession, path: str, delta_table_name: str
+) -> list[list[str, str]] | None:
+    path_table = join_path_table(path, delta_table_name)
+    check_path = Path(path_table)
+
+    if check_path.exists():
+        df = spark.read.format("delta").load(path_table)
+        df_checkpoint = df.select("reference_month", "model")
+        list_checkpoints = transform_df_to_list(df_checkpoint)
+        return list_checkpoints
+    else:
+        list_checkpoints = None
+        return list_checkpoints
+
+
 def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
     df_new_column = df.withColumn(col_name, F.lit(value))
     return df_new_column
@@ -72,9 +91,12 @@ def flag_is_in_checkpoint(
     Returns:
         bool: A FLAG basically saying "ALREADY extracted" go to another MODEL.
     """
-    current_list = [current_reference_month.replace("/", " de "), current_model]
-    check = current_list in checkpoint_list
-    return check
+
+    if checkpoint_list is not None:
+        current_list = [current_reference_month.replace("/", " de "), current_model]
+        check = current_list in checkpoint_list
+        return check
+    pass
 
 
 if __name__ == "__main__":

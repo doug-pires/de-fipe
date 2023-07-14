@@ -11,10 +11,10 @@ from fipe.elt.extract import (
     scrape_options_models,
     scrape_options_month_year,
 )
-from fipe.elt.load import read_delta_table, save_delta_table
+from fipe.elt.load import save_delta_table
 from fipe.elt.transform import (
     flag_is_in_checkpoint,
-    transform_df_to_list,
+    transform_checkpoint_to_list,
     transform_to_df,
 )
 from fipe.pipeline.read_configuration import (
@@ -50,9 +50,9 @@ def main():
     spark = spark_manager.get_spark_session()
 
     # Read Checkpoint
-    df_fipe = read_delta_table(spark, path_dev, "fipe_bronze")
-    df_checkpoint = df_fipe.select("reference_month", "model")
-    list_checkpoints = transform_df_to_list(df_checkpoint)
+    list_checkpoints = transform_checkpoint_to_list(
+        spark=spark, path=path_dev, delta_table_name="fipe_bronze"
+    )
 
     site_fipe = open_chrome(url, False)
     scroll_to_element(site_fipe, xpath_search_car)
@@ -88,7 +88,7 @@ def main():
             ################
             list_models = scrape_options_models(site_fipe)
 
-            for model in list_models[:4]:
+            for model in list_models[:6]:
                 is_downloaded = flag_is_in_checkpoint(
                     current_reference_month=month_year,
                     current_model=model,
@@ -97,59 +97,62 @@ def main():
                 print(
                     f"Was downloaded info for reference month {month_year} and the model {model} yet? {is_downloaded}"
                 )
-                time.sleep(3)
-                if is_downloaded:
-                    print("Downloaded yet... Leaving!")
-                    break
+                if not is_downloaded:
+                    # print("Downloaded yet... Leaving!")
+                    # break
 
-                scroll_to_element(driver=site_fipe, xpath=xpath_bt_model)
-                bt_model = locate_bt(driver=site_fipe, xpath=xpath_bt_model)
-                click(bt_model)
-                add_on(bt_model, model)
+                    scroll_to_element(driver=site_fipe, xpath=xpath_bt_model)
+                    bt_model = locate_bt(driver=site_fipe, xpath=xpath_bt_model)
+                    click(bt_model)
+                    add_on(bt_model, model)
 
-                # For Each Model extract all Manufacturing Year - Fuel Available
-                ################
-                list_manufacturing_year_fuel = scrape_manufacturing_year_fuel(site_fipe)
-                logger.info(
-                    f"Manufacturing Year available: {list_manufacturing_year_fuel} for {month_year} and brand {brand}, model: {model}"
-                )
-
-                for manufacturing_year in list_manufacturing_year_fuel:
-                    bt_manufacturing_year = locate_bt(
-                        site_fipe, xpath_bt_manufacturing_year_fuel
+                    # For Each Model extract all Manufacturing Year - Fuel Available
+                    ################
+                    list_manufacturing_year_fuel = scrape_manufacturing_year_fuel(
+                        site_fipe
                     )
-                    click(bt_manufacturing_year)
-                    add_on(bt_manufacturing_year, manufacturing_year)
+                    logger.info(
+                        f"Manufacturing Year available: {list_manufacturing_year_fuel} for {month_year} and brand {brand}, model: {model}"
+                    )
 
-                    bt_search = locate_bt(site_fipe, xpath_bt_search)
-                    # Press Search
-                    # We decorated that function to RETRY whenever we can not access the table
-                    click(bt_search)
+                    for manufacturing_year in list_manufacturing_year_fuel:
+                        bt_manufacturing_year = locate_bt(
+                            site_fipe, xpath_bt_manufacturing_year_fuel
+                        )
+                        click(bt_manufacturing_year)
+                        add_on(bt_manufacturing_year, manufacturing_year)
 
-                    # Extract All Table
-                    data = scrape_complete_tbody(site_fipe, new_columns_df_bronze)
+                        bt_search = locate_bt(site_fipe, xpath_bt_search)
+                        # Press Search
+                        # We decorated that function to RETRY whenever we can not access the table
+                        click(bt_search)
 
-                    list_fipe_information.append(data)
+                        # Extract All Table
+                        data = scrape_complete_tbody(site_fipe, new_columns_df_bronze)
 
-                # Clean Search
-                # We are cleaning because some model are not available for the SPECIFIC Manufacturing Year - Fuel left by the last process.
-                # The options were REFRESH the PAGE OR Clean the fields EXCEPT the reference_month.
-                # That's why I decided clean the table and add the BRAND again.
-                bt_clean = locate_bt(site_fipe, xpath_bt_clean_search)
-                click(bt_clean)
+                        list_fipe_information.append(data)
 
-                # After Clean, lWe will add again the Brand.
-                click(bt_brand)
-                add_on(bt_brand, brand)
+                    # Clean Search
+                    # We are cleaning because some model are not available for the SPECIFIC Manufacturing Year - Fuel left by the last process.
+                    # The options were REFRESH the PAGE OR Clean the fields EXCEPT the reference_month.
+                    # That's why I decided clean the table and add the BRAND again.
+                    bt_clean = locate_bt(site_fipe, xpath_bt_clean_search)
+                    click(bt_clean)
 
-        df = transform_to_df(spark, list_fipe_information, schema_df_fipe_bronze)
-        save_delta_table(
-            df=df,
-            path=path_dev,
-            mode="append",
-            delta_table_name="fipe_bronze",
-            partition_by=["reference_month"],
-        )
+                    # After Clean, lWe will add again the Brand.
+                    click(bt_brand)
+                    add_on(bt_brand, brand)
+
+                    df = transform_to_df(
+                        spark, list_fipe_information, schema_df_fipe_bronze
+                    )
+                    save_delta_table(
+                        df=df,
+                        path=path_dev,
+                        mode="append",
+                        delta_table_name="fipe_bronze",
+                        partition_by=["reference_month", "brand"],
+                    )
 
     list_fipe_information.clear()
 
