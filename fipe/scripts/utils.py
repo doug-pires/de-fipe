@@ -53,7 +53,7 @@ def retry_search(max_attempts, delay=2):
     return decorator
 
 
-# @retry_search(max_attempts=3, delay=3)
+@retry_search(max_attempts=3, delay=3)
 def open_chrome(url: str, headless: bool = True):
     """Open Google Chrome browser and navigate to the specified URL.
 

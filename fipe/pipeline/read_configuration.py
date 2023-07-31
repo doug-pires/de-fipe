@@ -29,4 +29,4 @@ new_columns_df_bronze = __bronze_config["df_fipe_bronze_new_columns"]
 
 
 if __name__ == "__main__":
-    print(bronze_path)
+    print(__webscraper_config)

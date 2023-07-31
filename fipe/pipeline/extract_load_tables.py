@@ -2,6 +2,7 @@
 This module according to BRAND extract all MODELS and MANUFACTURING YEAR / FUEL
 Save in Bronze Path
 """
+import asyncio
 import time
 
 from fipe.elt.extract import (
@@ -78,7 +79,7 @@ def main():
         ################
         list_brands = scrape_options_brands(site_fipe)
 
-        for brand in list_brands[:3]:
+        for brand in list_brands[:2]:
             time.sleep(0.5)
             bt_brand = locate_bt(site_fipe, xpath_bt_brand)
             add_on(bt_brand, brand)
@@ -87,7 +88,7 @@ def main():
             ################
             list_models = scrape_options_models(site_fipe)
 
-            for model in list_models[:6]:
+            for model in list_models[:2]:
                 is_downloaded = flag_is_in_checkpoint(
                     current_reference_month=month_year,
                     current_model=model,
@@ -142,6 +143,7 @@ def main():
                     click(bt_brand)
                     add_on(bt_brand, brand)
 
+                    # Let's create a CONCURRENCY in this function, while is TRANSFORMING and SAVING I can jump to another code.
                     df = transform_to_df(
                         spark, list_fipe_information, schema_df_fipe_bronze
                     )
@@ -163,3 +165,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # asyncio.run(main())
