@@ -18,6 +18,7 @@ from fipe.elt.transform import (
     transform_to_df,
 )
 from fipe.pipeline.read_configuration import (
+    bronze_path,
     new_columns_df_bronze,
     schema_df_fipe_bronze,
     url,
@@ -44,14 +45,12 @@ logger = get_logger(__name__)
 
 
 def main():
-    from dev.dev_utils import path_dev
-
     spark_manager = SparkSessionManager(app_name=__name__)
     spark = spark_manager.get_spark_session()
 
     # Read Checkpoint
     list_checkpoints = transform_checkpoint_to_list(
-        spark=spark, path=path_dev, delta_table_name="fipe_bronze"
+        spark=spark, path=bronze_path, delta_table_name="fipe_bronze"
     )
 
     site_fipe = open_chrome(url, False)
@@ -148,7 +147,7 @@ def main():
                     )
                     save_delta_table(
                         df=df,
-                        path=path_dev,
+                        path=bronze_path,
                         mode="append",
                         delta_table_name="fipe_bronze",
                         partition_by=["reference_month", "brand"],

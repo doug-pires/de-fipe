@@ -2,6 +2,7 @@
 
 import time
 
+import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -52,7 +53,7 @@ def retry_search(max_attempts, delay=2):
     return decorator
 
 
-@retry_search(max_attempts=3, delay=3)
+# @retry_search(max_attempts=3, delay=3)
 def open_chrome(url: str, headless: bool = True):
     """Open Google Chrome browser and navigate to the specified URL.
 
@@ -63,6 +64,7 @@ def open_chrome(url: str, headless: bool = True):
     Returns:
         webdriver.Chrome: The Chrome WebDriver instance.
     """
+
     options = webdriver.ChromeOptions()
     if headless:
         options.add_argument("--headless")
@@ -71,10 +73,18 @@ def open_chrome(url: str, headless: bool = True):
     options.add_argument("--disable-dev-shm-usage")
 
     options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(
-        service=ChromeService(ChromeDriverManager().install()),
-        options=options,
-    )
+    try:
+        driver = webdriver.Chrome(
+            service=ChromeService(ChromeDriverManager().install()),
+            options=options,
+        )
+    except ValueError:
+        # Always check the Chrome Version.
+        chromedriver_autoinstaller.install()
+
+        driver = webdriver.Chrome(
+            options=options,
+        )
     try:
         logger.info("Loading Google Chrome")
         driver.get(url)
@@ -173,4 +183,4 @@ def add_on(bt_or_box, info: str):
 
 
 if __name__ == "__main__":
-    open_chrome("https://www..com/", False)
+    open_chrome("https://www.google.com/", False)

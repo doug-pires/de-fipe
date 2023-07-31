@@ -3,7 +3,8 @@
 # Always add the Key tag, so that we can know which information this file will provide!
 tag: bronze
 
-base_path: "/mnt/bronze"
+base_path: "/mnt/c/Users/dpire/Desktop/bronze"
+
 
 dataframes:
   reference_month:
