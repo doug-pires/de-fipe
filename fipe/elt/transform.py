@@ -1,6 +1,5 @@
 # This file hold TRANSFORMATION functions
 
-
 from pathlib import Path
 
 import pyspark.sql.functions as F

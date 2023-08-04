@@ -45,7 +45,7 @@ from fipe.scripts.utils import (
 logger = get_logger(__name__)
 
 
-def main():
+async def main():
     spark_manager = SparkSessionManager(app_name=__name__)
     spark = spark_manager.get_spark_session()
 
@@ -63,9 +63,11 @@ def main():
     ################
 
     list_reference_months = scrape_options_month_year(site_fipe)
+
     start_time = time.time()
-    for month_year in list_reference_months[:2]:
-        time.sleep(0.5)
+    for month_year in list_reference_months[:1]:
+        # time.sleep(0.5)
+
         bt_month_year = locate_bt(
             driver=site_fipe,
             xpath=xpath_bt_month_year,
@@ -88,7 +90,7 @@ def main():
             ################
             list_models = scrape_options_models(site_fipe)
 
-            for model in list_models[:2]:
+            for model in list_models[:1]:
                 is_downloaded = flag_is_in_checkpoint(
                     current_reference_month=month_year,
                     current_model=model,
@@ -115,7 +117,7 @@ def main():
                         f"Manufacturing Year available: {list_manufacturing_year_fuel} for {month_year} and brand {brand}, model: {model}"
                     )
 
-                    for manufacturing_year in list_manufacturing_year_fuel:
+                    for manufacturing_year in list_manufacturing_year_fuel[0:2]:
                         bt_manufacturing_year = locate_bt(
                             site_fipe, xpath_bt_manufacturing_year_fuel
                         )
@@ -144,15 +146,19 @@ def main():
                     add_on(bt_brand, brand)
 
                     # Let's create a CONCURRENCY in this function, while is TRANSFORMING and SAVING I can jump to another code.
+
                     df = transform_to_df(
                         spark, list_fipe_information, schema_df_fipe_bronze
                     )
-                    save_delta_table(
-                        df=df,
-                        path=bronze_path,
-                        mode="append",
-                        delta_table_name="fipe_bronze",
-                        partition_by=["reference_month", "brand"],
+
+                    task = asyncio.create_task(
+                        save_delta_table(
+                            df=df,
+                            path=bronze_path,
+                            mode="append",
+                            delta_table_name="fipe_bronze",
+                            partition_by=["reference_month", "brand"],
+                        )
                     )
 
     list_fipe_information.clear()
@@ -164,5 +170,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-    # asyncio.run(main())
+    # main()
+    asyncio.run(main())

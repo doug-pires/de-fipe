@@ -1,6 +1,5 @@
 # This file hold SINK functions
 
-
 from pathlib import Path
 
 from pyspark.sql import DataFrame, SparkSession
@@ -27,7 +26,7 @@ def join_path_table(path: str, delta_table_name: str) -> str:
     return path_table
 
 
-def save_delta_table(
+async def save_delta_table(
     df: DataFrame,
     path: str,
     delta_table_name: str,
@@ -37,13 +36,13 @@ def save_delta_table(
 ):
     path_table = join_path_table(path, delta_table_name)
 
-    df.write.format("delta").mode(mode).option("enconding", encoding).partitionBy(
+    await df.write.format("delta").mode(mode).option("enconding", encoding).partitionBy(
         *partition_by
     ).save(path_table)
     if partition_by is None:
-        return logger.info("Saved as Delta table")
+        logger.info("Saved as Delta table")
     else:
-        return logger.info(f"Saved as Delta table partitioned by {partition_by}")
+        logger.info(f"Saved as Delta table partitioned by {partition_by}")
 
 
 def read_delta_table(
