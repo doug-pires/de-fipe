@@ -18,7 +18,7 @@ from fipe.elt.transform import (
     transform_checkpoint_to_list,
     transform_to_df,
 )
-from fipe.pipeline.read_configuration import (
+from fipe.conf.read_configuration import (
     bronze_path,
     new_columns_df_bronze,
     schema_df_fipe_bronze,

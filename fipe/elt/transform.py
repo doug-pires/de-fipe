@@ -113,11 +113,8 @@ def flag_is_in_checkpoint(
     pass
 
 
-
-
-
-
-
+def df_bronze_to_silver(df: DataFrame) -> DataFrame:
+    df.withColumn("reference_start_date", F.col("reference_date").cast("date"))
 
 
 if __name__ == "__main__":

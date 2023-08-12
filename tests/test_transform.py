@@ -2,11 +2,12 @@ import pytest
 from pyspark.sql.types import IntegerType, StringType, StructField, StructType
 
 from fipe.elt.transform import (
+    df_bronze_to_silver,
     flag_is_in_checkpoint,
     transform_df_to_list,
     transform_to_df,
 )
-from fipe.pipeline.read_configuration import schema_df_fipe_bronze
+from fipe.conf.read_configuration import schema_df_fipe_bronze
 
 
 def test_transform_df_to_list(spark_session):
@@ -120,5 +121,15 @@ def test_flag_checkpoint_returns_false():
     assert flag_is_extracted is False
 
 
+def test_transformation_step_bronze_to_silver():
+    # Given a bronze df from FIPE
+    # When I can the function to transform to silver
+    df_silver = df_bronze_to_silver()
+    # Then at least these columns, must be there:
+    expected_columns = {}
+
+    assert df_silver.columns == expected_columns
+
+
 if __name__ == "__main__":
-    pytest.main(["-v", "--setup-show", "-s", "-k", "test_df"])
+    pytest.main(["-v", "--setup-show", "-s", "-k", "test_transformation_step"])

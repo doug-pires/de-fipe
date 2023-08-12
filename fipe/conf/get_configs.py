@@ -6,6 +6,7 @@ import yaml
 from pyspark.sql.types import (
     ArrayType,
     DateType,
+    DecimalType,
     IntegerType,
     StringType,
     StructField,
@@ -20,10 +21,10 @@ logger = get_logger(__name__)
 
 # Path to read my configurations
 def get_paths_yml_configs():
-    pasta_conf = Path().cwd() / "fipe/conf"
-    caminhos_arquivos_conf = list(pasta_conf.glob("*.yml"))
+    path_conf = Path().cwd() / "fipe/conf"
+    path_files = list(path_conf.glob("*.yml"))
 
-    return caminhos_arquivos_conf
+    return path_files
 
 
 def __read_config(path_config: str | Path):
@@ -54,7 +55,7 @@ def get_configs(tag: str):
 
 def get_schema_from(
     config: dict, dataframe_name: str
-) -> Union[StructType, StringType, IntegerType, DateType, ArrayType]:
+) -> Union[StructType, StringType, IntegerType, DateType, ArrayType, DecimalType]:
     """
     In this function,we get the config file from the YML file.
     The schema information is provided as strings, such as StringType() and "ArrayType(StringType())".
@@ -99,7 +100,7 @@ def get_base_path(config: Dict) -> str:
 
 if __name__ == "__main__":
     configs_bronze = get_configs("bronze")
-    configs_silver = get_configs("webscraper")
+    configs_silver = get_configs("silver")
     print(configs_bronze)
     print(configs_silver)
     # schema = get_schema_from(configs_bronze, dataframe_name="df_fipe_bronze")

@@ -166,6 +166,7 @@ Checkpoint:
 
 `Silver Layer` basically the same Delta Table however with more columns.
 - Containing First Date of the *reference month*
+  - We will generate an `udf` function, because the reference month is a string of information, such as "agosto de 2023" or "julho de 2019". The `udf` function will parse using a dictionary to get the numbers for each month and return a string `yyyy-mm-dd`
 - Column REFERENCE YEAR
 - Column Manufacturing Year
 - Column Fuel Type

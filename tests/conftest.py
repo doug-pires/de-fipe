@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from pyspark.sql import SparkSession
 
-from fipe.pipeline.read_configuration import (
+from fipe.conf.read_configuration import (
     new_columns_df_bronze,
     xpath_bt_brand,
     xpath_bt_manufacturing_year_fuel,

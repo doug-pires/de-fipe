@@ -1,4 +1,4 @@
-from fipe.scripts.get_config import get_base_path, get_configs, get_schema_from
+from fipe.conf.get_configs import get_base_path, get_configs, get_schema_from
 
 # Get ALL Webscraper configs
 __webscraper_config = get_configs(tag="webscraper")
@@ -20,13 +20,20 @@ __bronze_config = get_configs(tag="bronze")
 # Get Base Path
 bronze_path = get_base_path(__bronze_config)
 
-schema_df_reference_month = get_schema_from(__bronze_config, "reference_month")
 schema_df_fipe_bronze = get_schema_from(__bronze_config, "df_fipe_bronze")
-
 
 # Get Mapping Columns for Bronze
 new_columns_df_bronze = __bronze_config["df_fipe_bronze_new_columns"]
 
 
+# Get Silver Config
+__silver_config = get_configs(tag="silver")
+
+# Get Base Path
+silver_path = get_base_path(__silver_config)
+
+schema_df_fipe_silver = get_schema_from(__silver_config, "df_fipe_silver")
+
+
 if __name__ == "__main__":
-    print(__webscraper_config)
+    print(bronze_path)

@@ -1,7 +1,7 @@
 import pytest
 from pyspark.sql.types import DateType, IntegerType, StringType, StructField, StructType
 
-from fipe.scripts.get_config import get_schema_from
+from fipe.conf.get_configs import get_schema_from
 
 
 def test_order_new_columns(config_new_columns_df_bronze):
