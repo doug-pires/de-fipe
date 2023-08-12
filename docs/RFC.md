@@ -132,29 +132,24 @@ The final result on `Bronze Layer` will be a Delta Table partitioned by *referen
 - Task 1:
   1. Install Google Chrome in the Job Cluster.
 - Task 2:
-  1. Open Browser
-  2. Extract all *reference months*
-  3. Save them as Delta Tables
-  4. Close Browser
-- Task 3:
    1. Open Browser
-   2. Read *reference months* and iterate over them to extract *brands*,*models*, *manufacturing year - fuel*
-   3. After finishing one *brand* we will save as Delta Table
+   2. Extract *reference months* and iterate over them to extract *brands*,*models*, *manufacturing year - fuel*
+   3. After finishing one *model* and *manufacturing year - fuel* we will save as Delta Table
    4. Create **Checkpoint**
    5. Repeat the Cycle
+- Task 3:
+  1. Read the tables on `Bronze` to apply data cleansing, validation, add new columns and save it as Delta Table into `Silver Layer`
 - Task 4:
-  1. Read the tables on `Bronze` apply data cleansing, validation, add new columns and save it as Delta Table into `Silver Layer`
-- Task 5:
    1. Create our facts and dimensions to save it on `Gold Layer`
 
 ## Data Assets
-`Bronze Layer` we will have Delta Table `fipe_bronze` PARTITIONED BY *reference month* then the parquet files.
+`Bronze Layer` we will have Delta Table `fipe_bronze` PARTITIONED BY *reference month*.
 - Columns :
   - reference_month string
   - fipe_code string
   - brand string
   - model string
-  - manufacturing year string
+  - manufacturing year - fuel string
   - authentication string
   - query_date string
   - average_price string
@@ -162,16 +157,18 @@ The final result on `Bronze Layer` will be a Delta Table partitioned by *referen
 Checkpoint:
 - One Instance `json_file: { "reference_month": "april/2021", "brand": "Nissan", "model": "Sentra GLE" }`
 
-> We are changing the name of the columns, because in portuguese, we have spaces, punctuation, then Delta Lake does not allow carry on saving the table.
+> We are changing the name of the columns, because in portuguese, we have spaces, punctuation, then Delta Lake does not allow carry on saving the table ( and it's not a good practice ).
 
-`Silver Layer` basically the same Delta Table however with more columns.
-- Containing First Date of the *reference month*
-  - We will generate an `udf` function, because the reference month is a string of information, such as "agosto de 2023" or "julho de 2019". The `udf` function will parse using a dictionary to get the numbers for each month and return a string `yyyy-mm-dd`
-- Column REFERENCE YEAR
-- Column Manufacturing Year
-- Column Fuel Type
-- Cast Average Price to DecimalType
-- Probably other info columns
+
+`Silver Layer` we will add more columns.
+- Columns:
+  - *Reference First Date* derived from the *reference month*
+    - We will generate an `udf` function, because the reference month is a string of information, such as "agosto de 2023" or "julho de 2019". The `udf` function will parse using a dictionary to get the numbers for each month and return a string `yyyy-mm-dd`
+  - Column *REFERENCE YEAR* derived from the *reference month*
+  - Column *Manufacturing Year* derived from *Manufacturing Year - Fuel*
+  - Column *Fuel Type* derived from *Manufacturing Year - Fuel*
+  - Cast column *Average Price* to DecimalType
+  - Probably other info columns
 
 `Gold Layer` create our fact and dimensions.
 
