@@ -15,7 +15,22 @@ logger = get_logger(__name__)
 def transform_list_to_df(
     spark: SparkSession, data: list[str], schema: StructType = None
 ) -> DataFrame:
-    # Create a list of rows with the specified schema
+    """
+    Transform a list of strings into a DataFrame.
+
+    This function takes a list of strings and converts it into a DataFrame with
+    the specified schema. Each string in the input list corresponds to a single
+    row in the DataFrame.
+
+    Parameters:
+    spark (SparkSession): The Spark session used to create the DataFrame.
+    data (List[str]): The list of strings to be transformed into a DataFrame.
+    schema (StructType, optional): The schema to be used for the DataFrame.
+        If not provided, the resulting DataFrame will have a single string column.
+
+    Returns:
+    DataFrame: A DataFrame containing the transformed data.
+    """
     rows = [(value,) for value in data]
     df = spark.createDataFrame(rows, schema)
     return df
@@ -96,6 +111,13 @@ def flag_is_in_checkpoint(
         check = current_list in checkpoint_list
         return check
     pass
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":

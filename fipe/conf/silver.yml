@@ -4,3 +4,34 @@
 tag: silver
 
 base_path: "/mnt/c/Users/dpire/Desktop/silver"
+
+dataframes:
+  df_fipe_silver:
+    columns:
+      - name: "reference_start_date"
+        type: DateType()
+        nullable: false
+      - name: "reference_year"
+        type: IntegerType()
+        nullable: false
+      - name: "fipe_code"
+        type: StringType()
+        nullable: false
+      - name: "brand"
+        type: StringType()
+        nullable: true
+      - name: "model"
+        type: StringType()
+        nullable: true
+      - name: "manufacturing_year"
+        type: IntegerType()
+        nullable: true
+      - name: "fuel type"
+        type: StringType()
+        nullable: true
+      - name: "query_date"
+        type: StringType()
+        nullable: true
+      - name: "average_price"
+        type: DecimalType()
+        nullable: true

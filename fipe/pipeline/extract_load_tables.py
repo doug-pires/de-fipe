@@ -2,7 +2,7 @@
 This module according to BRAND extract all MODELS and MANUFACTURING YEAR / FUEL
 Save in Bronze Path
 """
-import asyncio
+
 import time
 
 from fipe.elt.extract import (
@@ -45,7 +45,7 @@ from fipe.scripts.utils import (
 logger = get_logger(__name__)
 
 
-async def main():
+def main():
     spark_manager = SparkSessionManager(app_name=__name__)
     spark = spark_manager.get_spark_session()
 
@@ -151,14 +151,12 @@ async def main():
                         spark, list_fipe_information, schema_df_fipe_bronze
                     )
 
-                    task = asyncio.create_task(
-                        save_delta_table(
-                            df=df,
-                            path=bronze_path,
-                            mode="append",
-                            delta_table_name="fipe_bronze",
-                            partition_by=["reference_month", "brand"],
-                        )
+                    save_delta_table(
+                        df=df,
+                        path=bronze_path,
+                        mode="append",
+                        delta_table_name="fipe_bronze",
+                        partition_by=["reference_month", "brand"],
                     )
 
     list_fipe_information.clear()
@@ -170,5 +168,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    # main()
-    asyncio.run(main())
+    main()

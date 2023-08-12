@@ -26,7 +26,7 @@ def join_path_table(path: str, delta_table_name: str) -> str:
     return path_table
 
 
-async def save_delta_table(
+def save_delta_table(
     df: DataFrame,
     path: str,
     delta_table_name: str,
@@ -36,9 +36,21 @@ async def save_delta_table(
 ):
     path_table = join_path_table(path, delta_table_name)
 
-    await df.write.format("delta").mode(mode).option("enconding", encoding).partitionBy(
-        *partition_by
-    ).save(path_table)
+    # Use partitionBy without await
+    if partition_by is not None:
+        df = (
+            df.write.format("delta")
+            .mode(mode)
+            .option("encoding", encoding)
+            .partitionBy(*partition_by)
+        )
+    else:
+        df = df.write.format("delta").mode(mode).option("encoding", encoding)
+
+    # Save the DataFrame as a Delta table
+    df.save(path_table)
+
+    # Log the result
     if partition_by is None:
         logger.info("Saved as Delta table")
     else:

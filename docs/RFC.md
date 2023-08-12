@@ -167,6 +167,9 @@ Checkpoint:
 `Silver Layer` basically the same Delta Table however with more columns.
 - Containing First Date of the *reference month*
 - Column REFERENCE YEAR
+- Column Manufacturing Year
+- Column Fuel Type
+- Cast Average Price to DecimalType
 - Probably other info columns
 
 `Gold Layer` create our fact and dimensions.
