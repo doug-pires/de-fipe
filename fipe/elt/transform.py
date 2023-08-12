@@ -2,8 +2,7 @@
 
 from pathlib import Path
 
-import pyspark.sql.functions as F
-from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import Column, DataFrame, SparkSession
 from pyspark.sql.types import StructType
 
 from fipe.elt.load import join_path_table
@@ -85,9 +84,24 @@ def transform_checkpoint_to_list(
         return list_checkpoints
 
 
-def add_column(df: DataFrame, col_name: str, value: str) -> DataFrame:
-    df_new_column = df.withColumn(col_name, F.lit(value))
-    return df_new_column
+def add_columns(df: DataFrame, expressions: dict[str:Column]) -> DataFrame:
+    """
+    Add new columns to a DataFrame based on the provided expressions.
+
+    Parameters:
+    - df (DataFrame): The input DataFrame to which new columns will be added.
+    - expressions (dict[str, Column]): A dictionary where the keys are column names
+      and the values are Column objects representing the expressions for the new columns.
+
+    Returns:
+    DataFrame: A new DataFrame with the additional columns.
+    """
+    cols_name = list(expressions.keys())
+
+    for col in cols_name:
+        df = df.withColumn(col, expressions.get(col))
+
+    return df
 
 
 def flag_is_in_checkpoint(
@@ -111,10 +125,6 @@ def flag_is_in_checkpoint(
         check = current_list in checkpoint_list
         return check
     pass
-
-
-def df_bronze_to_silver(df: DataFrame) -> DataFrame:
-    df.withColumn("reference_start_date", F.col("reference_date").cast("date"))
 
 
 if __name__ == "__main__":

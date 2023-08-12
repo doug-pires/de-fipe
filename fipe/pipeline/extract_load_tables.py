@@ -5,19 +5,6 @@ Save in Bronze Path
 
 import time
 
-from fipe.elt.extract import (
-    scrape_complete_tbody,
-    scrape_manufacturing_year_fuel,
-    scrape_options_brands,
-    scrape_options_models,
-    scrape_options_month_year,
-)
-from fipe.elt.load import save_delta_table
-from fipe.elt.transform import (
-    flag_is_in_checkpoint,
-    transform_checkpoint_to_list,
-    transform_to_df,
-)
 from fipe.conf.read_configuration import (
     bronze_path,
     new_columns_df_bronze,
@@ -30,6 +17,19 @@ from fipe.conf.read_configuration import (
     xpath_bt_month_year,
     xpath_bt_search,
     xpath_search_car,
+)
+from fipe.elt.extract import (
+    scrape_complete_tbody,
+    scrape_manufacturing_year_fuel,
+    scrape_options_brands,
+    scrape_options_models,
+    scrape_options_month_year,
+)
+from fipe.elt.load import save_delta_table
+from fipe.elt.transform import (
+    flag_is_in_checkpoint,
+    transform_checkpoint_to_list,
+    transform_to_df,
 )
 from fipe.scripts.get_spark import SparkSessionManager
 from fipe.scripts.loggers import get_logger

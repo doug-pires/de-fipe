@@ -13,7 +13,7 @@ def test_order_new_columns(config_new_columns_df_bronze):
         "fipe_code",
         "brand",
         "model",
-        "manufacturing_year",
+        "manufacturing_year_fuel",
         "authentication",
         "query_date",
         "average_price",

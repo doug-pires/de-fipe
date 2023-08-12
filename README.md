@@ -12,3 +12,5 @@
 5. Extract the Table
   - <img width="256" alt="image" src="https://github.com/doug-pires/de-fipe/assets/62630272/a63d3b81-9e45-47fb-afdf-94dc3ccacebf">
 6. Save it as a Delta table
+
+

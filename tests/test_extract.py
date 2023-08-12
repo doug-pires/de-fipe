@@ -73,7 +73,7 @@ def test_if_the_scrape_table_returns_type_dict(
         "fipe_code": "023037-5",
         "brand": "Nissan",
         "model": "Sentra GLE",
-        "manufacturing_year": "1995 Gasolina",
+        "manufacturing_year_fuel": "1995 Gasolina",
         "authentication": "ABC",
         "query_date": "quarta-feira, 28 de junho de 2023 18:34",
         "average_price": "R$ 8.939,00",

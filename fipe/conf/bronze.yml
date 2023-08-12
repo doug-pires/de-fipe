@@ -27,7 +27,7 @@ dataframes:
       - name: "model"
         type: StringType()
         nullable: true
-      - name: "manufacturing_year"
+      - name: "manufacturing_year_fuel"
         type: StringType()
         nullable: true
       - name: "authentication"
@@ -45,7 +45,7 @@ df_fipe_bronze_new_columns:
   - fipe_code
   - brand
   - model
-  - manufacturing_year
+  - manufacturing_year_fuel
   - authentication
   - query_date
   - average_price
