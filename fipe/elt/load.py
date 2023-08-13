@@ -71,5 +71,4 @@ def read_delta_table(
 
 
 if __name__ == "__main__":
-    path = Path("/mnt/c/Users/dpire/Desktop/fipe_bronze")
-    print(path.exists())
+    ...

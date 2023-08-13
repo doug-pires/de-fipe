@@ -7,13 +7,7 @@ base_path: "/mnt/c/Users/dpire/Desktop/bronze"
 
 
 dataframes:
-  reference_month:
-    columns:
-      - name: reference_month
-        type: StringType()
-        nullable: false
-
-  df_fipe_bronze:
+  fipe_bronze:
     columns:
       - name: "reference_month"
         type: StringType()

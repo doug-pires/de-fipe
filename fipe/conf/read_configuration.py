@@ -20,7 +20,8 @@ __bronze_config = get_configs(tag="bronze")
 # Get Base Path
 bronze_path = get_base_path(__bronze_config)
 
-schema_df_fipe_bronze = get_schema_from(__bronze_config, "df_fipe_bronze")
+table_name_bronze = "fipe_bronze"
+schema_df_fipe_bronze = get_schema_from(__bronze_config, table_name_bronze)
 
 # Get Mapping Columns for Bronze
 new_columns_df_bronze = __bronze_config["df_fipe_bronze_new_columns"]
@@ -36,4 +37,4 @@ schema_df_fipe_silver = get_schema_from(__silver_config, "df_fipe_silver")
 
 
 if __name__ == "__main__":
-    print(bronze_path)
+    print(__bronze_config)

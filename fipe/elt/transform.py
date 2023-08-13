@@ -127,5 +127,45 @@ def flag_is_in_checkpoint(
     pass
 
 
+# UDF to transform string date to first date of the month-year
+def parse_month_year(input_str) -> str:
+    """
+    Transform a string representing a month and year into the first date of that month-year.
+
+    Args:
+        input_str (str): A string representing the month and year. The month should be one of the following (case-insensitive):
+                        'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro',
+                        or 'novembro', 'dezembro'. The year should be a valid numeric representation.
+
+    Returns:
+        str: A string representing the first date of the specified month-year in the format 'YYYY-MM-DD'.
+            If the input format is invalid or incomplete (missing year or unknown month), the function returns None.
+    """
+    month_names = {
+        "janeiro": "01",
+        "fevereiro": "02",
+        "março": "03",
+        "abril": "04",
+        "maio": "05",
+        "junho": "06",
+        "julho": "07",
+        "agosto": "08",
+        "setembro": "09",
+        "outubro": "10",
+        "novembro": "11",
+        "dezembro": "12",
+    }
+
+    parts = input_str.split(" de ")
+    month = month_names.get(parts[0].lower())
+    if month is None:
+        return None
+    try:
+        year = parts[1]
+    except IndexError:
+        return None
+    return f"{year}-{month}-01"
+
+
 if __name__ == "__main__":
-    ...
+    print(parse_month_year("agosto de 2025"))

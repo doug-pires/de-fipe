@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 from pyspark.sql import SparkSession
+from pyspark.sql.types import IntegerType, StringType, StructField, StructType
 
 from fipe.conf.read_configuration import (
     new_columns_df_bronze,
@@ -104,3 +105,15 @@ class DriverFixture:
 @pytest.fixture(scope="session")
 def driver_fixture_brands():
     return DriverFixture("brands")
+
+
+@pytest.fixture(scope="session")
+def dummy_data_schema_name():
+    fields = [
+        StructField("name", StringType(), nullable=False),
+        StructField("age", IntegerType(), nullable=False),
+    ]
+    schema = StructType(fields)
+
+    data = [("Douglas", 31), ("Tifa", 25), ("Marc", 75)]
+    return [schema, data]

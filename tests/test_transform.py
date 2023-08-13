@@ -1,25 +1,20 @@
 import pyspark.sql.functions as F
 import pytest
-from pyspark.sql.types import IntegerType, StringType, StructField, StructType
 
 from fipe.conf.read_configuration import schema_df_fipe_bronze
 from fipe.elt.transform import (
     add_columns,
     flag_is_in_checkpoint,
+    parse_month_year,
     transform_df_to_list,
     transform_to_df,
 )
 
 
-def test_transform_df_to_list(spark_session):
+def test_transform_df_to_list(spark_session, dummy_data_schema_name):
     # Given the SCHEMA and the DATA to create the Dataframe
-    fields = [
-        StructField("name", StringType(), nullable=False),
-        StructField("age", IntegerType(), nullable=False),
-    ]
-    schema = StructType(fields)
-
-    data = [("Douglas", 31), ("Tifa", 25), ("Marc", 75)]
+    schema = dummy_data_schema_name[0]
+    data = dummy_data_schema_name[1]
     df_demo = spark_session.createDataFrame(data=data, schema=schema)
 
     # When we call the function to transform this DF to list
@@ -114,19 +109,16 @@ def test_flag_checkpoint_returns_false():
     assert flag_is_extracted is False
 
 
-def test_add_columns_are_being_added_following_a_dict_expression(spark_session):
+def test_add_columns_are_being_added_following_a_dict_expression(
+    spark_session, dummy_data_schema_name
+):
     # Given the dict with new column names and expression to apply in the Dataframe
     expr = {
         "upper_name": F.upper(F.col("name")),
         "age plus 10": F.expr("age + 10"),
     }
-    fields = [
-        StructField("name", StringType(), nullable=False),
-        StructField("age", IntegerType(), nullable=False),
-    ]
-    schema = StructType(fields)
-
-    data = [("Douglas", 31), ("Tifa", 25), ("Marc", 75)]
+    schema = dummy_data_schema_name[0]
+    data = dummy_data_schema_name[1]
     df_demo = spark_session.createDataFrame(data=data, schema=schema)
 
     # When I call the function
@@ -134,15 +126,45 @@ def test_add_columns_are_being_added_following_a_dict_expression(spark_session):
 
     # Then I need to have two columns obeying the expression
     expected_new_cols = {"upper_name", "age plus 10"}
-    expected_upper_names = ["DOUGLAS", "TIFA", "MARC"]
-    upper_names = [
+    expected_upper_names = {"DOUGLAS", "TIFA", "MARC"}
+    upper_names = {
         row["upper_name"] for row in df_added_cols.select("upper_name").collect()
-    ]
+    }
     for expected_col in expected_new_cols:
         assert expected_col in df_added_cols.columns
 
-    assert expected_upper_names == upper_names
+    for expected_upper_name in expected_upper_names:
+        assert expected_upper_name in upper_names
+
+
+def test_udf_to_parse_month_year_to_first_date():
+    # Given the set of input containing month-year
+    input_month_year = {"janeiro de 2025", "fevereiro de 2017", "abril de 2002"}
+    # When I call to parse the function
+
+    # Then must return the first date for each month-year
+    expected_outputs = {"2025-01-01", "2017-02-01", "2002-04-01"}
+
+    for input in input_month_year:
+        assert parse_month_year(input) in expected_outputs
+
+
+def test_udf_to_parse_month_year_in_case_invalid_input_return_none():
+    # Given the set of input containing month-year
+    input_month_year_with_errors = {
+        "janeiro-2025",
+        "fevereiro2017",
+        " de 2022",
+        "de 2011",
+    }
+    # When I call to parse the function
+
+    # Then must return the first date for each month-year
+    expected = None
+
+    for input in input_month_year_with_errors:
+        assert parse_month_year(input) is expected
 
 
 if __name__ == "__main__":
-    pytest.main(["-v", "--setup-show", "-s", "-k", "test_add_columns"])
+    pytest.main(["-v", "--setup-show", "-s", "-k", "test_udf"])

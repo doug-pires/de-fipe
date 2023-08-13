@@ -9,6 +9,7 @@ from fipe.conf.read_configuration import (
     bronze_path,
     new_columns_df_bronze,
     schema_df_fipe_bronze,
+    table_name_bronze,
     url,
     xpath_bt_brand,
     xpath_bt_clean_search,
@@ -90,7 +91,7 @@ def main():
             ################
             list_models = scrape_options_models(site_fipe)
 
-            for model in list_models[:1]:
+            for model in list_models[:2]:
                 is_downloaded = flag_is_in_checkpoint(
                     current_reference_month=month_year,
                     current_model=model,
@@ -155,7 +156,7 @@ def main():
                         df=df,
                         path=bronze_path,
                         mode="append",
-                        delta_table_name="fipe_bronze",
+                        delta_table_name=table_name_bronze,
                         partition_by=["reference_month", "brand"],
                     )
 
