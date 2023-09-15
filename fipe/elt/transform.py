@@ -167,5 +167,11 @@ def parse_month_year(input_str) -> str:
     return f"{year}-{month}-01"
 
 
+def drop_cols(df: DataFrame, cols_to_drop: list[str]) -> DataFrame:
+    df = df.drop(*cols_to_drop)
+    return df
+
+
 if __name__ == "__main__":
     print(parse_month_year("agosto de 2025"))
+

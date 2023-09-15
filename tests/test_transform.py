@@ -4,6 +4,7 @@ import pytest
 from fipe.conf.read_configuration import schema_df_fipe_bronze
 from fipe.elt.transform import (
     add_columns,
+    drop_cols,
     flag_is_in_checkpoint,
     parse_month_year,
     transform_df_to_list,
@@ -166,5 +167,19 @@ def test_udf_to_parse_month_year_in_case_invalid_input_return_none():
         assert parse_month_year(input) is expected
 
 
+def test_if_dropped_the_columns(spark_session, dummy_data_schema_name):
+    # Given the dataframe with TWO COLS
+    schema = dummy_data_schema_name[0]
+    data = dummy_data_schema_name[1]
+    df_demo = spark_session.createDataFrame(data=data, schema=schema)
+
+    # When I pass my list of columns to drop
+    cols_to_drop = ["age"]
+
+    # THen my df must return only the columns I did not drop
+    df_result = drop_cols(df_demo, cols_to_drop)
+    assert "name" in df_result.columns
+
+
 if __name__ == "__main__":
-    pytest.main(["-v", "--setup-show", "-s", "-k", "test_udf"])
+    pytest.main(["-v", "--setup-show", "-s", "-k", "test_if_dropped"])

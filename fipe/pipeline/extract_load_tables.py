@@ -55,7 +55,7 @@ def main():
         spark=spark, path=bronze_path, delta_table_name="fipe_bronze"
     )
 
-    site_fipe = open_chrome(url, False)
+    site_fipe = open_chrome(url, True)
     scroll_to_element(site_fipe, xpath_search_car)
     bt = locate_bt(site_fipe, xpath_search_car)
     click(bt)
