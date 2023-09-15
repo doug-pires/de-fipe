@@ -4,12 +4,10 @@ import time
 
 import chromedriver_autoinstaller
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
-from webdriver_manager.chrome import ChromeDriverManager
 
 from fipe.scripts.loggers import get_logger
 
@@ -73,19 +71,9 @@ def open_chrome(url: str, headless: bool = True):
     options.add_argument("--disable-dev-shm-usage")
 
     options.add_argument("--no-sandbox")
+    chromedriver_autoinstaller.install()
     try:
-        driver = webdriver.Chrome(
-            service=ChromeService(ChromeDriverManager().install()),
-            options=options,
-        )
-    except ValueError:
-        # Always check the Chrome Version.
-        chromedriver_autoinstaller.install()
-
-        driver = webdriver.Chrome(
-            options=options,
-        )
-    try:
+        driver = webdriver.Chrome(options=options)
         logger.info("Loading Google Chrome")
         driver.get(url)
         time.sleep(3)
