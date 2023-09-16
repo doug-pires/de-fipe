@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["doug-pires <dpiresmartins@yahoo.com.br>"]
 readme = "README.md"
+packages = [{include = "fipe"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -16,6 +17,7 @@ mkdocs = "^1.4.3"
 mkdocs-material = "^9.1.17"
 chromedriver-autoinstaller = "^0.6.2"
 selenium = "^4.12.0"
+databricks-connect = "^13.3.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -44,3 +46,7 @@ markers = [
 
 [tool.black]
 line-length = 88
+
+
+[tool.poetry.scripts]
+on_demand = "fipe.pipeline.extract_on_demand:main"

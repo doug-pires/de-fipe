@@ -5,12 +5,12 @@ Save in Bronze Path
 
 import json
 import time
+from datetime import datetime
+
+from databricks.sdk import dbutils
 
 from fipe.conf.read_configuration import (
-    bronze_path,
     new_columns_df_bronze,
-    schema_df_fipe_bronze,
-    table_name_bronze,
     url,
     xpath_bt_brand,
     xpath_bt_clean_search,
@@ -20,20 +20,7 @@ from fipe.conf.read_configuration import (
     xpath_bt_search,
     xpath_search_car,
 )
-from fipe.elt.extract import (
-    scrape_complete_tbody,
-    scrape_manufacturing_year_fuel,
-    scrape_options_brands,
-    scrape_options_models,
-    scrape_options_month_year,
-)
-from fipe.elt.load import save_delta_table
-from fipe.elt.transform import (
-    flag_is_in_checkpoint,
-    transform_checkpoint_to_list,
-    transform_to_df,
-)
-from fipe.scripts.get_spark import SparkSessionManager
+from fipe.elt.extract import scrape_complete_tbody
 from fipe.scripts.loggers import get_logger
 from fipe.scripts.utils import (
     add_on,
@@ -62,7 +49,7 @@ def main():
     #     spark=spark, path=bronze_path, delta_table_name="fipe_bronze"
     # )
 
-    site_fipe = open_chrome(url, False)
+    site_fipe = open_chrome(url=url, headless=True)
     scroll_to_element(site_fipe, xpath_search_car)
     bt = locate_bt(site_fipe, xpath_search_car)
     click(bt)
@@ -72,7 +59,6 @@ def main():
 
     # list_reference_months = scrape_options_month_year(site_fipe)
 
-    start_time = time.time()
     # It will hold my fipe table
     list_fipe_information: list = []
     for month_year in list_reference_months:
@@ -156,17 +142,14 @@ def main():
                 # df = transform_to_df(
                 #     spark, list_fipe_information, schema_df_fipe_bronze
                 # )
-    print(list_fipe_information)
-    file_path = bronze_path + "/data.json"
 
-    # Open the file in write mode and save the list of JSON objects
-    with open(file_path, "w") as json_file:
-        json.dump(list_fipe_information, json_file, indent=4)
-
-    close_browser(site_fipe)
-    end_time = time.time()
-    total_time = end_time - start_time
-    print(f"Took {round(total_time,2)} seconds")
+    path_dbfs = "/mnt/json_on_demand/"
+    json_formatted = json.dumps(list_fipe_information)
+    json_datetime = f"{path_dbfs}data_json_{datetime.now().timestamp()}"
+    try:
+        dbutils.fs.put(json_datetime, json_formatted)
+    finally:
+        close_browser(site_fipe)
 
 
 if __name__ == "__main__":

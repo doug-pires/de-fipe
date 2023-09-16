@@ -99,7 +99,7 @@ def get_base_path(config: Dict) -> str:
 
 
 if __name__ == "__main__":
-    configs_bronze = get_configs("bronze")
+    configs_bronze = get_configs("webscraper")
     configs_silver = get_configs("silver")
     print(configs_bronze)
     print(configs_silver)
