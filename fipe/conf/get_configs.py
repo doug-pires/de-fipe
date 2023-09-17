@@ -1,4 +1,3 @@
-import pathlib
 from pathlib import Path
 from typing import Dict, Union
 
@@ -27,9 +26,9 @@ def get_paths_yml_configs():
     return path_files
 
 
-def __read_config(path_config: str | Path):
+def read_config(path_config: str | Path):
     try:
-        config = yaml.safe_load(pathlib.Path(path_config).read_text())
+        config = yaml.safe_load(Path(path_config).read_text())
         logger.info("Read the config file")
         return config
     except FileNotFoundError:
@@ -45,7 +44,7 @@ def get_configs(tag: str):
         Dict: Nested Dict on Configuration
     """
     paths = get_paths_yml_configs()
-    configs_list = [__read_config(path) for path in paths]
+    configs_list = [read_config(path) for path in paths]
     configs_dict = {
         config.get("tag"): {k: v for k, v in config.items() if k != "tag"}
         for config in configs_list
@@ -99,8 +98,12 @@ def get_base_path(config: Dict) -> str:
 
 
 if __name__ == "__main__":
-    configs_bronze = get_configs("webscraper")
-    configs_silver = get_configs("silver")
-    print(configs_bronze)
-    print(configs_silver)
-    # schema = get_schema_from(configs_bronze, dataframe_name="df_fipe_bronze")
+    path_conf = Path().cwd() / "fipe/conf"
+
+    # get_parameters()
+    web_config = read_config(path_conf / "scraper_config.yml")
+    print(web_config)
+    url = web_config["url"]
+    print(url)
+    xpath = web_config["xpaths"]["xpath_search_car"]
+    print(xpath)

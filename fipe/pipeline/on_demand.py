@@ -7,7 +7,7 @@ import json
 import time
 from datetime import datetime
 
-from databricks.sdk import dbutils
+from databricks.sdk import WorkspaceClient
 
 from fipe.conf.read_configuration import (
     new_columns_df_bronze,
@@ -142,12 +142,16 @@ def main():
                 # df = transform_to_df(
                 #     spark, list_fipe_information, schema_df_fipe_bronze
                 # )
-
+    w = WorkspaceClient()
+    # d = w.dbutils.fs.ls('/')
     path_dbfs = "/mnt/json_on_demand/"
     json_formatted = json.dumps(list_fipe_information)
     json_datetime = f"{path_dbfs}data_json_{datetime.now().timestamp()}"
+    print(list_fipe_information)
     try:
-        dbutils.fs.put(json_datetime, json_formatted)
+        w.dbutils.fs.put(json_datetime, json_formatted)
+    except AttributeError as e:
+        logger.error(e)
     finally:
         close_browser(site_fipe)
 
