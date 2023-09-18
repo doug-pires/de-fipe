@@ -32,7 +32,7 @@ def read_config(path_config: str | Path):
         logger.info("Read the config file")
         return config
     except FileNotFoundError:
-        return logger.error("Configuration file not provided")
+        logger.error("Configuration file not provided")
 
 
 def get_configs(tag: str):

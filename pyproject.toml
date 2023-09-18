@@ -49,5 +49,4 @@ line-length = 88
 
 
 [tool.poetry.scripts]
-chrome = "fipe.pipeline.install_chrome:main"
 on_demand = "fipe.pipeline.on_demand:main"

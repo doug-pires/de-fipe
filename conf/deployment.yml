@@ -1,5 +1,7 @@
 # Custom section is used to store configurations that might be repetative.
 # Please read YAML documentation for details on how to use substitutions and anchors.
+build:
+  poetry
 custom:
   basic-cluster-props: &basic-cluster-props
     spark_version: "13.3.x-scala2.12"
@@ -28,18 +30,22 @@ environments:
       # this is an example job with single ETL task based on 2.1 API and wheel_task format #
       ######################################################################################
       - name: "de_fipe"
+        job_clusters:
+          - job_cluster_key: "default"
+            <<: *basic-static-cluster
         tasks:
           - task_key: "install_chrome"
-            <<: *basic-static-cluster
-            python_wheel_task:
-              package_name: "fipe"
-              entry_point: "chrome" # take a look at the setup.py entry_points section for details on how to define an entrypoint
-              parameters: ["--conf-file", "file:fuse://conf/tasks/sample_etl_config.yml"]
+            job_cluster_key: "default"
+            spark_python_task:
+              python_file: "file://fipe/pipeline/install_chrome.py"
+              # parameters: ["--conf-file", "file:fuse://conf/tasks/sample_etl_config.yml"]
           - task_key: "extract_on_demand"
-            <<: *basic-static-cluster
+            job_cluster_key: "default"
             python_wheel_task:
               package_name: "fipe"
-              entry_point: "on_demand"
+              entry_point: "on_demand" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+            depends_on:
+              - task_key: "install_chrome"
               # parameters: ["--conf-file", "file:fuse://conf/tasks/sample_etl_config.yml"]
       #############################################################
       # this is an example multitask job with notebook task       #

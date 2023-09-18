@@ -11,8 +11,13 @@ from fipe.conf.get_configs import (
 
 
 path_conf = Path().cwd() / "fipe/conf"
+path_scraper = path_conf / "scraper_config.yml"
+path_bronze = path_conf / "bronze.yml"
+path_demo_scraper = "./fipe/conf/scraper_config.yml"
+path_demo_bronze = "./fipe/conf/bronze.yml"
 
-__webscraper_config = read_config(path_conf / "scraper_config.yml")
+
+__webscraper_config = read_config(path_demo_scraper)
 # __webscraper_config = get_configs(tag="webscraper")
 url: str = __webscraper_config["url"]
 xpath_search_car = __webscraper_config["xpaths"]["xpath_search_car"]
@@ -27,7 +32,7 @@ xpath_bt_clean_search = __webscraper_config["xpaths"]["xpath_bt_clean_search"]
 
 
 # Get Bronze Config
-__bronze_config = read_config(path_conf / "bronze.yml")
+__bronze_config = read_config(path_demo_bronze)
 
 # Get Base Path
 bronze_path = get_base_path(__bronze_config)
@@ -49,4 +54,5 @@ new_columns_df_bronze = __bronze_config["df_fipe_bronze_new_columns"]
 
 
 if __name__ == "__main__":
-    print(__bronze_config)
+    print(url)
+    print(bronze_path)
