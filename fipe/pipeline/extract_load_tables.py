@@ -5,7 +5,7 @@ Save in Bronze Path
 
 import time
 
-from fipe.conf.read_configuration import (
+from fipe.scripts.provide_configuration import (
     bronze_path,
     new_columns_df_bronze,
     schema_df_fipe_bronze,

@@ -2,10 +2,10 @@ import pyspark.sql.functions as F
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 
-from fipe.conf.read_configuration import bronze_path, silver_path, table_name_bronze
 from fipe.elt.load import read_delta_table, save_delta_table
 from fipe.elt.transform import add_columns, parse_month_year
 from fipe.scripts.get_spark import SparkSessionManager
+from fipe.scripts.provide_configuration import bronze_path, silver_path, table_name_bronze
 
 # Register UDF
 transform_to_first_date = udf(parse_month_year, StringType())

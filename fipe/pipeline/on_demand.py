@@ -9,7 +9,9 @@ from datetime import datetime
 
 from databricks.sdk import WorkspaceClient
 
-from fipe.conf.read_configuration import (
+from fipe.elt.extract import scrape_complete_tbody
+from fipe.scripts.loggers import get_logger
+from fipe.scripts.provide_configuration import (
     new_columns_df_bronze,
     url,
     xpath_bt_brand,
@@ -20,8 +22,6 @@ from fipe.conf.read_configuration import (
     xpath_bt_search,
     xpath_search_car,
 )
-from fipe.elt.extract import scrape_complete_tbody
-from fipe.scripts.loggers import get_logger
 from fipe.scripts.utils import (
     add_on,
     click,
@@ -150,6 +150,7 @@ def main():
     print(list_fipe_information)
     try:
         w.dbutils.fs.put(json_datetime, json_formatted)
+        logger.info("Saved to %s", path_dbfs)
     except AttributeError as e:
         logger.error(e)
     finally:

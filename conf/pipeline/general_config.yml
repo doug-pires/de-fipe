@@ -1,0 +1,53 @@
+url: https://veiculos.fipe.org.br/
+
+xpaths:
+  xpath_search_car : //a[@data-slug='carro' and @data-action='veiculos']
+  xpath_bt_month_year : //*[@id="selectTabelaReferenciacarro"]
+  xpath_bt_brand : //*[@id="selectMarcacarro"]
+  xpath_bt_model : //*[@id="selectAnoModelocarro"]
+  xpath_bt_manufacturing_year_fuel : //*[@id="selectAnocarro"]
+  xpath_bt_search : //a[@id="buttonPesquisarcarro"]
+  xpath_bt_clean_search: //div[@id="buttonLimparPesquisarcarro"]//a
+
+
+
+base_path_bronze: "/mnt/c/Users/dpire/Desktop/bronze"
+
+
+dataframes:
+  fipe_bronze:
+    columns:
+      - name: "reference_month"
+        type: StringType()
+        nullable: false
+      - name: "fipe_code"
+        type: StringType()
+        nullable: true
+      - name: "brand"
+        type: StringType()
+        nullable: true
+      - name: "model"
+        type: StringType()
+        nullable: true
+      - name: "manufacturing_year_fuel"
+        type: StringType()
+        nullable: true
+      - name: "authentication"
+        type: StringType()
+        nullable: true
+      - name: "query_date"
+        type: StringType()
+        nullable: true
+      - name: "average_price"
+        type: StringType()
+        nullable: true
+
+df_fipe_bronze_new_columns:
+  - reference_month
+  - fipe_code
+  - brand
+  - model
+  - manufacturing_year_fuel
+  - authentication
+  - query_date
+  - average_price

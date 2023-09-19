@@ -1,7 +1,7 @@
 import pyspark.sql.functions as F
 import pytest
 
-from fipe.conf.read_configuration import schema_df_fipe_bronze
+from fipe.scripts.provide_configuration import schema_df_fipe_bronze
 from fipe.elt.transform import (
     add_columns,
     drop_cols,

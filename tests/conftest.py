@@ -5,7 +5,7 @@ import pytest
 from pyspark.sql import SparkSession
 from pyspark.sql.types import IntegerType, StringType, StructField, StructType
 
-from fipe.conf.read_configuration import (
+from fipe.scripts.provide_configuration import (
     new_columns_df_bronze,
     xpath_bt_brand,
     xpath_bt_manufacturing_year_fuel,
