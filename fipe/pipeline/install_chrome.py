@@ -6,7 +6,7 @@
 # COMMAND ----------
 
 # MAGIC %sh
-# MAGIC wget  -P /usr/ https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /dev/null 2>&1 &
+# MAGIC wget  -P /usr/ https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
 # COMMAND ----------
 

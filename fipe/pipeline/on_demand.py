@@ -35,9 +35,9 @@ logger = get_logger(__name__)
 
 
 list_reference_months = ["janeiro/2023", "fevereiro/2023"]
-list_brands = ["Nissan"]
-list_models = ["NX 2000"]
-list_manufacturing_year_fuel = ["1994 Gasolina"]
+list_brands = ["BMW"]
+list_models = ["320i"]
+list_manufacturing_year_fuel = ["2007 Gasolina", "2006 Gasolina"]
 
 
 def main():
@@ -49,7 +49,7 @@ def main():
     #     spark=spark, path=bronze_path, delta_table_name="fipe_bronze"
     # )
 
-    site_fipe = open_chrome(url=url, headless=True)
+    site_fipe = open_chrome(url=url, headless=False)
     scroll_to_element(site_fipe, xpath_search_car)
     bt = locate_bt(site_fipe, xpath_search_car)
     click(bt)
@@ -142,7 +142,7 @@ def main():
                 # df = transform_to_df(
                 #     spark, list_fipe_information, schema_df_fipe_bronze
                 # )
-    w = WorkspaceClient()
+    w = WorkspaceClient(profile="PERSONAL")
     # d = w.dbutils.fs.ls('/')
     path_dbfs = "/mnt/json_on_demand/"
     json_formatted = json.dumps(list_fipe_information)
@@ -158,5 +158,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    print(xpath_bt_brand)
+    main()

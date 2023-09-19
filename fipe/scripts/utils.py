@@ -51,7 +51,7 @@ def retry_search(max_attempts, delay=2):
     return decorator
 
 
-@retry_search(max_attempts=3, delay=3)
+# @retry_search(max_attempts=3, delay=3)
 def open_chrome(url: str, headless: bool = True):
     """Open Google Chrome browser and navigate to the specified URL.
 
@@ -143,7 +143,7 @@ def click_with_driver(driver: WebDriver, bt_or_box: str):
     return driver.execute_script(js_code, bt_or_box)
 
 
-@retry_search(max_attempts=3, delay=2)
+# @retry_search(max_attempts=3, delay=2)
 def click(bt_or_box):
     """Click on a WebElement.
 
@@ -153,6 +153,7 @@ def click(bt_or_box):
     Returns:
         None
     """
+    # selenium.common.exceptions.ElementClickInterceptedException
     return bt_or_box.click()
 
 
