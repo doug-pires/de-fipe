@@ -2,9 +2,15 @@
 # Please read YAML documentation for details on how to use substitutions and anchors.
 build:
    python: "poetry"
+
+
 custom:
   basic-cluster-props: &basic-cluster-props
     spark_version: "13.3.x-scala2.12"
+    spark_conf:
+      spark.databricks.delta.preview.enabled: 'true'
+    spark_env_vars:
+      MY_VAR: Douglas Pires
 
   basic-static-cluster: &basic-static-cluster
     new_cluster:
@@ -33,19 +39,29 @@ environments:
         job_clusters:
           - job_cluster_key: "default"
             <<: *basic-static-cluster
+            # init_scripts:
+            #   - dbfs:
+            #       destination: dbfs:/some/path/install_sql_driver.sh
         tasks:
-          - task_key: "install_chrome"
-            job_cluster_key: "default"
-            spark_python_task:
-              python_file: "file://fipe/pipeline/install_chrome.py"
+          # - task_key: "install_chrome"
+          #   job_cluster_key: "default"
+          #   spark_python_task:
+          #     python_file: "file://fipe/pipeline/install_chrome.py"
               # parameters: ["--conf-file", "file:fuse://conf/tasks/sample_etl_config.yml"]
+          - task_key: "notebook"
+            deployment_config:
+              no_package: true # we omit using package since code will be shipped directly from the Repo
+            job_cluster_key: "default"
+            notebook_task:
+              notebook_path: "/Repos/dpm@dpiresmartins.onmicrosoft.com/Databricks/Install Google Chrome/Install Google Chrome Demo"
+
           - task_key: "provide_configuration_values"
             job_cluster_key: "default"
             spark_python_task:
               python_file: "file://fipe/scripts/provide_configuration.py"
               parameters: ["--conf-file", "file:fuse://conf/pipeline/general_config.yml"]
             depends_on:
-              - task_key: "install_chrome"
+              - task_key: "notebook"
           - task_key: "extract_on_demand"
             job_cluster_key: "default"
             python_wheel_task:
